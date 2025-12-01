@@ -1,0 +1,206 @@
+---
+title: "savesyestuff"
+format: html
+editor: visual
+---
+
+## Quarto
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+```{r}
+1 + 1
+```
+
+You can add options to executable code like this
+
+```{r}
+#| echo: false
+2 * 2
+```
+
+The `echo: false` option disables the printing of code (only output is displayed).
+
+
+```{python}
+# List for storing images
+img_list = []
+
+# Test Grass Image: 
+img_list.append(color.rgb2gray(io.imread("../images/grass_image_test.png")))
+
+# Living Lab Image:
+img_list.append(color.rgb2gray(io.imread("../images/living_lab.jpg")))
+
+# List to store magnitudes for each image
+mag_list = []
+
+# List to store angles for each image
+theta_list = []
+
+for x in range(len(img_list)):
+    # Get image of interest
+    img = img_list[x]
+    
+    rescaled_file_path = f"../output/plots/grass/{x}.jpg"
+    
+    # Determine aspect Ratio
+    aspect_ratio = img.shape[0] / img.shape[1]
+    print("Aspect Ratio:", aspect_ratio)
+    
+    # Hard-Code height to 200 pixels
+    height = 200
+    
+    # Calculate witdth to maintain same aspect ratio
+    width = int(height / aspect_ratio)
+    print("Resized Width:", width)
+    
+    # Resize the image
+    resized_img = resize(img, (height, width))
+    
+    # Replace the original image with the resized image
+    img_list[x] = resized_img
+  
+    
+    # list for storing all magnitudes for image[x]
+    mag = []
+    
+    # list for storing all angles for image[x]
+    theta = []
+    
+    for i in range(height):
+        magnitudeArray = []
+        angleArray = []
+
+        for j in range(width):
+            if j - 1 < 0 or j + 1 >= width:
+                if j - 1 < 0:
+                    Gx = resized_img[i][j + 1] - 0
+                elif j + 1 >= width:
+                    Gx = 0 - resized_img[i][j - 1]
+            else:
+                Gx = resized_img[i][j + 1] - resized_img[i][j - 1]
+
+            if i - 1 < 0 or i + 1 >= height:
+                if i - 1 < 0:
+                    Gy = 0 - resized_img[i + 1][j]
+                elif i + 1 >= height:
+                    Gy = resized_img[i - 1][j] - 0
+            else:
+                Gy = resized_img[i + 1][j] - resized_img[i - 1][j]
+
+            magnitude = math.sqrt(pow(Gx, 2) + pow(Gy, 2))
+            magnitudeArray.append(round(magnitude, 9))
+
+            if Gx == 0:
+                angle = math.degrees(0.0)
+            else:
+                angle = math.degrees(math.atan(Gy / Gx))
+                if angle < 0:
+                    angle += 180
+
+            angleArray.append(round(angle, 9))
+
+        mag.append(magnitudeArray)
+        theta.append(angleArray)
+
+    # add list of magnitudes to list[x]
+    mag_list.append(np.array(mag))
+
+    # add list of angles to angle list[x]
+    theta_list.append(np.array(theta))
+    
+## Extract Gradient Magnitudes and Angles from each Grass Image
+    
+# Test Image DF of gradient magnitudes and angles
+mag_grass_image_test = np.array(mag_list[0])
+theta_grass_image_test = np.array(theta_list[0])
+
+# Living Lab Image DF of gradient magnitudes and angles
+mag_living_lab = np.array(mag_list[1])
+theta_living_lab = np.array(theta_list[1])
+    
+```
+
+## Change to R: 
+
+```{r}
+library(imager)
+library(dplyr)
+library(tools)
+```
+
+
+```{r}
+# --- Input / Output directories ---
+input_dir <- "../images"
+output_data_dir <- "../output/angles_mags"
+
+# Create output folder if it doesn't exist
+if (!dir.exists(output_data_dir)) dir.create(output_data_dir, recursive = TRUE)
+
+# --- List image files ---
+image_files <- list.files(input_dir, pattern = "\\.(png|jpg|jpeg)$", ignore.case = TRUE)
+
+# --- Loop over images ---
+for (image_file in image_files) {
+  
+  cat("Processing:", image_file, "\n")
+  image_name <- file_path_sans_ext(image_file)
+  
+  # Read and convert to grayscale
+  img <- load.image(file.path(input_dir, image_file)) %>% grayscale()
+  
+  # Resize
+  height <- 200
+  scale_factor <- height / dim(img)[1]
+  resized_img <- imresize(img, scale = scale_factor)
+  
+  # Update width & height after resizing
+  height <- dim(resized_img)[1]
+  width  <- dim(resized_img)[2]
+  
+  # Initialize matrices
+  mag <- matrix(0, nrow = height, ncol = width)
+  theta <- matrix(0, nrow = height, ncol = width)
+  
+  # Compute gradients manually
+  for (i in seq_len(height)) {
+    for (j in seq_len(width)) {
+      i_up <- min(i + 1, height)
+      i_down <- max(i - 1, 1)
+      j_right <- min(j + 1, width)
+      j_left <- max(j - 1, 1)
+      
+      Gx <- resized_img[i, j_right, 1, 1] - resized_img[i, j_left, 1, 1]
+      Gy <- resized_img[i_up, j, 1, 1] - resized_img[i_down, j, 1, 1]
+      
+      mag[i, j] <- round(sqrt(Gx^2 + Gy^2), 9)
+      
+      if (Gx == 0) {
+        angle <- 0
+      } else {
+        angle <- atan(Gy / Gx) * 180 / pi
+        if (angle < 0) angle <- angle + 180
+      }
+      theta[i, j] <- round(angle, 9)
+    }
+  }
+  
+  # Save dataset
+  dataset_df <- data.frame(
+    theta = as.vector(theta),
+    mag = as.vector(mag)
+  ) %>% mutate(radian = theta * pi / 180)
+  
+  write.csv(dataset_df, file.path(output_data_dir, paste0(image_name, "_dataset.csv")), row.names = FALSE)
+  
+  cat("Saved dataset for", image_name, "\n")
+}
+
+
+```
