@@ -28,7 +28,9 @@ library(tidyverse)
 library(circular)
 library(readr)
 library(stringr)
-library(exifr)
+library(exif)
+library(tectonicr)
+library(lubridate)
 ```
 
 ## Extracting Angles and Magnitudes from Images
@@ -47,10 +49,6 @@ image_files <- list.files(input_dir, # look into the input_dir and return the li
 for (image in image_files) { # this goes through each image in the image_files list
   cat("Processing:", basename(image), "\n")
   flush.console()
-  
-  # get date data
-  #exif_info <- read_exif(image)
-  #image_date <- exif_info$DateTimeOriginal[1]
   
   img <- load.image(image) # load the image be viewed now
   img_gray <- grayscale(img) # convert to gray scale
@@ -103,16 +101,44 @@ for (image in image_files) { # this goes through each image in the image_files l
     theta = theta_vec,
     mag = mag_vec,
     radian = radian_vec
-    #date_taken = image_date
   )
   
   # saves the df to output_data_dir
-  out_name <- paste0(tools::file_path_sans_ext(basename(image)), "_", tools::file_ext(image), ".csv")
+  out_name <- paste0(tools::file_path_sans_ext(basename(image)), ".csv")
   write_csv(dataset_df, file.path(output_data_dir, out_name))
 
 }
 
 ```
+## Retrieving dates from images
+
+```{r}
+# Define the the input and output directories
+input_dir <- "../images"
+output_weighted_dir <- "../output/weighted_datasets"
+
+image_files <- list.files(input_dir, # look into the input_dir and return the list of files there
+                          pattern = "\\.(png|jpg|jpeg|PNG|JPG|JPEG)$", # get files that end with these
+                          full.names = TRUE # returns the full path instead of just the file name
+                          ) 
+
+# Read EXIF metadata
+exif_data <- read_exif(image_files)
+
+# Select only fields you need
+exif_df <- data.frame(
+  image_name = tools::file_path_sans_ext(basename(image_files)),
+  date_taken = exif_data$timestamp
+)
+
+# Convert timestamp to Date 
+# what the char looks like: 2023:04:20 19:21:53
+exif_df$date_taken <- as.Date(ymd_hms(gsub(":", " ", exif_df$date_taken)))
+
+# Save CSV
+write_csv(exif_df, file.path(output_weighted_dir, "dates_dataset.csv"))
+```
+
 
 ## Retrieving Weighted (by magnitudes) Circular Statistics from Angles in Images
 
@@ -172,6 +198,31 @@ write_csv(weighted_df, file.path(output_weighted_dir, "all_weighted_dataset.csv"
 mean_of_means <- mean(weighted_df$circular_mean)
 
 mean_of_means
+```
+```{r, message=FALSE}
+output_weighted_dir <- "../output/weighted_datasets"
+
+weighted_csv <- read_csv("../output/weighted_datasets/all_weighted_dataset.csv")
+dates_csv <- read_csv("../output/weighted_datasets/dates_dataset.csv")
+grass_df <- merge(dates_csv, weighted_csv)
+
+write_csv(grass_df, file.path(output_weighted_dir, "grass_df.csv"))
+```
+
+
+```{r}
+library(ggplot2)
+library(readr)
+data <- read_csv("https://raw.githubusercontent.com/franriee/SYE_Grass_Study/refs/heads/main/output/weighted_datasets/all_weighted_dataset.csv")
+
+plot <- 
+  ggplot(data,
+         aes(x = circular_median)) +
+  geom_histogram(colour = "black", 
+                 fill = "darkgreen"
+  )
+
+plot
 ```
 
 
