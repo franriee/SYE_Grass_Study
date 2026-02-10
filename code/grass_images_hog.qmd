@@ -84,6 +84,8 @@ for (image in image_files) { # this goes through each image in the image_files l
       Gy <- if (i == 1) -M[i+1, j] else if (i == h) M[i-1, j] else M[i+1, j] - M[i-1, j]
       mag_row[j] <- sqrt(Gx^2 + Gy^2)
       angle <- if (Gx == 0) 0 else atan(Gy / Gx) * 180 / pi
+      # angle <- atan2(Gx, -Gy) * 180 / pi
+      # if (angle < 0) angle <- angle + 360
       if (angle < 0) angle <- angle + 180
       theta_row[j] <- angle
     }
@@ -164,6 +166,7 @@ for (file in dataset_files) {
   angles <- df$theta
   magnitudes <- df$mag
   
+  # Change axial = FALSE
   # Compute weighted circular statistics
   mean_val <- circular_mean(angles, w = magnitudes, axial = TRUE, na.rm = TRUE)
   var_val <- circular_var(angles, w = magnitudes, axial = TRUE, na.rm = TRUE)
@@ -905,3 +908,6 @@ plt.show()
 plt.tight_layout()
 plt.savefig("../output/images/grass_image_test_mag.png", dpi=300)
 ```
+
+
+    
