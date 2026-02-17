@@ -1,4 +1,3 @@
-#
 # This is a Shiny web application. You can run the application by clicking
 # the 'Run App' button above.
 #
@@ -28,46 +27,63 @@ image_names <- basename(image_urls)
 ui <- fluidPage(
 
     # Application title
-    titlePanel("What direction do you think the grass is pointing?"),
+    #titlePanel("What direction do you think the grass is pointing?", align = "center"),
+    h2(strong("Grass Orientation Study"), align = "center", style = "margin-top: 40px; margin-bottom: 20px;"),
     
-    # If I want to show the image name to the users
-    # Image name
-    # h3(textOutput("img_name"), align = "left"),
+    # Instructions Section
+    div(style = "background-color: #f9f9f9; padding: 15px; margin-bottom: 20px;",
+        h4(strong("Instructions:")),
+        tags$ol(
+          tags$li("Observe the grass orientation in the image."),
+          tags$li(strong("Click a spot on the image"), " to point the arrow toward the direction most of the grass is pointing."),
+          tags$li("Click ", strong("'Submit & Next Image'"), " to save your response.")
+        )
+    ),
+    
+    # Notes
+    p("Thank you for your time! We appreciate as many responses as you are willing to provide. You may exit at any time by simply closing your browser window."),
+    
+    hr(),
     
     # Image display
     div(plotOutput("img_display", click = "plot_click", width = "500px", height = "500px"), align = "center"),
-    
-    h4(uiOutput("angle_text"), align = "center"),
-    
-    br(),
-    
-    h4(textOutput("counter"), align = "center"), 
    
-    br(),
+    # Counter and Button
+    div(style = "text-align: center; margin: -10px;",
+        h4(textOutput("counter"), style = "margin-top: 25px; margin-bottom: 10px;"),
+        actionButton("submit_btn", "Submit & Next Image", style = "margin-top: 20px; margin-bottom: 20px;")
+    ),
     
-    # Text instructions
-    h4(strong("Instructions:"), align = "left"),
-    p("1. Click the grass to the point that you think most of the grass is laying in.",
-      br(),
-      "2. Click \"Submit & Next Image\" when you are done.", 
-      br(), 
-      "3. To exit out of the program, click the X button on the window. Thank you!", 
-      align = "left"),
-    
-    br(),
-    
-    p(strong("NB:"), "Some images have been rotated.", align = "left"),
-    
-    br(),
-    
-    # A Submit Button to submit the data and move to the next image
-    actionButton("submit_btn", "Submit & Next Image")
-    
-)
+    hr(),
+
+    div(class = "section-header",
+        h4(strong("More About This Study:"), style = "margin-top: 25px; margin-bottom: 20px;")
+    ),
+    div(style = "background-color: #f9f9f9; padding: 20px; border-radius: 10px",
+        p(strong("Background Information: "), "This application is part of a Senior Year Experience (SYE) Honors project at St. Lawrence University. 
+        Our goal is to develop reliable and efficient methods for measuring grass orientation from field images to better understand 
+        changing wind patterns in Savoonga, Alaska. In Arctic communities, residents have long relied on Traditional 
+        Ecological Knowledge (TEK), in particular, physically observing how grass lays, to guide hunting and subsistence activities. However, 
+        changes in climate and a lack of historical wind data in harsh weather conditions have made these patterns harder to predict and keep track of. 
+        We are using components of the Histogram of Oriented Gradients (HOG) algorithm to automate the detection of these orientations."),
+        p(strong("Why You Are Clicking: "), "Your input provides the human-verified \"ground truth\" needed to validate our algorithm. By comparing your observations
+          to our automated results, we can ensure our tool is accurate enough to support community-led climate monitoring."),
+        p(strong("Further Information: "), "This research is being conducted by Francesca Mnenula under the supervision of Dr. Ivan Ramler within the Department of Mathematics, Statistics, and Computer Science. For questions or 
+          additional information, please contact Dr. Ivan Ramler at iramler@stlawu.edu.")
+        ), 
+    br(), br(), br()
+    )
 
 server <- function(input, output, session) {
   # set seed for randomness sampling
-  set.seed(2026)
+  set.seed(as.numeric(Sys.time()))
+  
+  # go through the sequence of images
+  random_order <- sample(seq_along(image_urls))
+  
+  # get the url for the current one sampled
+  randomized_urls  <- image_urls[random_order]
+  randomized_names <- image_names[random_order]
   
   # Initialise idx value for images
   idx <- reactiveVal(1)
@@ -79,13 +95,8 @@ server <- function(input, output, session) {
   # Initialise the image orientation by picking a random rotation (could be 0, 90, 180, or 270 degrees)
   rotation <- reactiveVal(sample(c(0, 90, 180, 270), 1))
   
-  # Initialise the angle that the user will change arrow to
+  # Initialise the angle that the user will change arrow to point in
   current_angle <- reactiveVal(0)
-  
-  # Display the angle the user will chose
-  output$angle_text <- renderText({
-    paste0("Selected Angle: ", round(current_angle(), 0), "°")
-  })
   
   # Display the counter
   output$counter <- renderText({
@@ -96,6 +107,7 @@ server <- function(input, output, session) {
   observeEvent(input$plot_click, {
     req(input$plot_click)
     
+    # Find the coordinates of the point the user clicked (had to multiple by 100 because the regular coord are btwn 0 and 1)
     click_x <- input$plot_click$x * 100
     click_y <- input$plot_click$y * 100
     
@@ -104,12 +116,11 @@ server <- function(input, output, session) {
     dy <- click_y - 50
     
     # Convert x,y to degrees (using atan2)
-    # R's atan2 is (y, x). We adjust math to make 0 degrees "North/Up"
+    # Gemini: R's atan2 is (y, x). Adjust the calculation to make 0 degrees "North/Up"
     res_angle <- (atan2(dx, dy) * 180 / pi) %% 360
-    current_angle(res_angle)
     
-    # debug
-    print(paste("Click X:", click_x, "Click Y:", click_y))
+    # Now update the initialised current_angle
+    current_angle(res_angle)
   })
   
   # Update google sheet with updates
@@ -142,25 +153,10 @@ server <- function(input, output, session) {
     current_angle(0)
   })
   
-  # Moving to the next image with a next btn
-  #observeEvent(input$next_btn, {
-   # new_idx <- idx() + 1
-    # if (new_idx > length(image_urls)) new_idx <- 1
-    # idx(new_idx)
-    
-    # Reset the slider to 0 for the new image
-    #updateSliderInput(session, "user_value", value = 0)
-  #})
-  
-  # If you want to show the image name to the users
-  # output$img_name <- renderText({
-  #  image_names[idx()]
-  # })
-  
   output$img_display <- renderPlot({
     
     # Get current image
-    img_url <- image_urls[idx()]
+    img_url <- randomized_urls[idx()]
     
     # Variables for the coordinate plane
     xlim <- c(0, 100)
@@ -185,11 +181,11 @@ server <- function(input, output, session) {
       geom_image(aes(x = 50, y = 50, image = img_url), 
                  size = 1.5,
                  angle = rotation()) +
-       geom_segment(
+      geom_segment(
         aes(x = x0, y = y0, xend = x1, yend = y1), 
-        linewidth = 2,
-        color = "red",
-        arrow = arrow(length = unit(10, "points"))
+        linewidth = 7, 
+        color = "#4B0082", 
+        arrow = arrow(length = unit(12, "points"), type = "closed", angle = 20)
       ) +
       coord_fixed(xlim = c(0, 100), ylim = c(0, 100), expand = FALSE) + 
       theme_void() +
