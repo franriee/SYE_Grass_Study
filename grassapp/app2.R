@@ -79,7 +79,7 @@ ui <- fluidPage(
       h4(strong("More About This Study:"), style = "margin-top: 25px; margin-bottom: 20px;")
   ),
   div(style = "background-color: #f9f9f9; padding: 20px; border-radius: 10px",
-      p(strong("Background Information: "), "This application is part of a Senior Year Experience (SYE) Honors project at St. Lawrence University. 
+      p(strong("Background Information: "), "This application is part of a Data Science Senior Year Experience (SYE) Honors project at St. Lawrence University. 
         Our goal is to develop reliable and efficient methods for measuring grass orientation from field images to better understand 
         changing wind patterns in Savoonga, Alaska. In Arctic communities, residents have long relied on Traditional 
         Ecological Knowledge (TEK), in particular, physically observing how grass lays, to guide hunting and subsistence activities. However, 
@@ -87,7 +87,7 @@ ui <- fluidPage(
         We are using components of the Histogram of Oriented Gradients (HOG) algorithm to automate the detection of these orientations."),
       p(strong("Why You Are Clicking: "), "Your input provides the human-verified \"ground truth\" needed to validate our algorithm. By comparing your observations
           to our automated results, we can ensure our tool is accurate enough to support community-led climate monitoring."),
-      p(strong("Further Information: "), "This research is being conducted by Francesca Mnenula under the supervision of Dr. Ivan Ramler within the Department of Mathematics, Statistics, and Computer Science. For questions or 
+      p(strong("Further Information: "), "This research is being conducted by Francesca Mnenula under the supervision of Dr. Ivan Ramler within the Department of Mathematics, Statistics, Data Science, and Computer Science. For questions or 
           additional information, please contact Dr. Ivan Ramler at iramler@stlawu.edu.")
   ), 
   br(), br(), br())
@@ -201,7 +201,14 @@ server <- function(input, output, session) {
   })
   # Submitting the entry
   observeEvent(input$submit_btn, {
+    # Get the click
+    d <- event_data("plotly_click", source = "grass_plot")
     req(!is.na(current_angle()))
+    
+    # Calculate the magnitude of the arrow from the center
+    dx <- d$x - 0.5
+    dy <- d$y - 0.5
+    mag <- sqrt(dx^2 + dy^2)
     
     # Upon submission, create the row of data by creating a df
     # Make sure to retrieve the name of the image the user is seeing
@@ -212,7 +219,10 @@ server <- function(input, output, session) {
       User_Angle = round(current_angle(), 2),
       True_Angle = round((current_angle() - rotation()) %% 360, 2),
       Rotation = rotation(),
-      Timestamp = format(Sys.time(), tz = "America/New_York")
+      Timestamp = format(Sys.time(), tz = "America/New_York"),
+      Coord_x = round(d$x, 2),
+      Coord_y = round(d$y, 2),
+      Magnitude = round(mag, 2)
     ), sheet = "Sheet2")
     
     # If we are not at the end, then
@@ -228,7 +238,7 @@ server <- function(input, output, session) {
     } else {
       # When user is done, tell them the study is complete
       showModal(modalDialog(
-        p("Thank you for contributing to this SYE Grass Study. Your data has been saved. You may now close this browser window."),
+        p("Thank you for contributing to this SYE Study. Your data has been saved. You may now close this browser window."),
       ))
     }
   })
