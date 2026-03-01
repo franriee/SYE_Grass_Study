@@ -31,6 +31,7 @@ library(stringr)
 library(exif)
 library(tectonicr)
 library(lubridate)
+library(ggplot2)
 ```
 
 ## Extracting Angles and Magnitudes from Images
@@ -227,7 +228,6 @@ plot <-
 
 plot
 ```
-
 
 ## Generating a Polar Plot Showing Mean Grass Patterns Across These Images
 

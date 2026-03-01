@@ -52,7 +52,7 @@ ui <- fluidPage(
   div(style = "background-color: #f9f9f9; padding: 15px; margin-bottom: 20px;",
       h4(strong("How to participate:")),
       tags$ol(
-        tags$li("Look at the general flow of the grass in the photo."),
+        tags$li("Look at the general flow of the grass in the photo below."),
         tags$li(strong("Click anywhere on the image"), " and the purple arrow will point toward your click."),
         tags$li("Adjust the arrow by clicking different spots until it matches the grass direction of most of the grass in the photo."),
         tags$li("Click ", strong("Submit & Next Image"), " to lock in your answer.")
@@ -64,10 +64,10 @@ ui <- fluidPage(
   
   hr(),
   
-  div(style = "max-width: 600px; margin: auto;",
-      h4(strong(textOutput("image_name_display")), style = "margin-bottom: 15px;"),
-      plotlyOutput("img_display", width = "500px", height = "500px"), # see the name of the image on the screen
-      div(style = "text-align: center; margin-top: 15px;",
+  div(style = "max-width: 600px; margin: auto; display: flex; flex-direction: column; align-items: center;",
+      #h4(strong(textOutput("image_name_display")), style = "margin-bottom: 15px;"), # view name of image on screen
+      plotlyOutput("img_display", width = "500px", height = "500px"), 
+      div(style = "margin-top: 15px;text-align: center;",
           h4(textOutput("counter")),
           actionButton("submit_btn", "Submit & Next Image", class = "btn-primary")
       )
@@ -145,7 +145,7 @@ server <- function(input, output, session) {
           x = 0, y = 1,
           sizex = 1, sizey = 1,
           xref = "x", yref = "y",
-          sizing = "stretch",
+          sizing = "contain",
           layer = "below"
         )),
         margin = list(l=0, r=0, t=0, b=0),
