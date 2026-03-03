@@ -127,13 +127,28 @@ image_files <- list.files(input_dir, # look into the input_dir and return the li
 
 # Read EXIF metadata
 exif_data <- read_exif(image_files)
+```
 
+```{r}
+exif_data
+```
+
+
+```{r}
 # Select only fields you need
 exif_df <- data.frame(
   image_name = tools::file_path_sans_ext(basename(image_files)),
-  date_taken = exif_data$timestamp
+  date_taken = exif_data$origin_timestamp
 )
+```
 
+```{r}
+exif_df
+```
+
+
+
+```{r}
 # Convert timestamp to Date 
 # what the char looks like: 2023:04:20 19:21:53
 exif_df$date_taken <- as.Date(ymd_hms(gsub(":", " ", exif_df$date_taken)))
