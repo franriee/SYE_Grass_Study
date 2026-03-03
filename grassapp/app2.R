@@ -54,7 +54,9 @@ ui <- fluidPage(
       tags$ol(
         tags$li("Look at the general flow of the grass in the photo below."),
         tags$li(strong("Click anywhere on the image"), " and the purple arrow will point toward your click."),
-        tags$li("Adjust the arrow by clicking different spots until it matches the grass direction of most of the grass in the photo."),
+        tags$li("You can adjust the angle of the arrow by clicking different spots until it matches the grass 
+                direction of most of the grass in the photo. (Note that the length of the arrow doesn’t matter for this study.)"),
+        #tags$li("Adjust the arrow by clicking different spots until it matches the grass direction of most of the grass in the photo."),
         tags$li("Click ", strong("Submit & Next Image"), " to lock in your answer.")
       )
   ),
