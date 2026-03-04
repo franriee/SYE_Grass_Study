@@ -1,4 +1,4 @@
-# This version uses GitHub folders for speed but restores precise clicking logic
+# This version uses plotly and uses folders with already rotated images
 
 # Load libraries
 library(shiny)
@@ -13,7 +13,7 @@ library(uuid)
 gs4_auth(path = "sye2026-5dd46ac66f14.json")
 sheet_url <- "https://docs.google.com/spreadsheets/d/19002kMeTJ4caXqI836P4sCkHAB-WvlcL3er5T0K8E-o/edit#gid=198629460"
 
-# Github configuration for image retrieval
+# Github variables
 repo_owner <- "franriee"
 repo_name <- "SYE_Grass_Study"
 
