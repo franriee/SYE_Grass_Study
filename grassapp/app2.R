@@ -197,7 +197,7 @@ server <- function(input, output, session) {
       UserID = user_session_id,
       Image = img_master$name[idx()], 
       User_Angle = round(current_angle(), 2),
-      True_Angle = round((current_angle() + rotation()) %% 360, 2),
+      True_Angle = round((current_angle() - rotation()) %% 360, 2), # reverse the rotation and that is the true angle
       Rotation = rotation(),
       Timestamp = format(Sys.time(), tz = "America/New_York"),
       Coord_x = round(cx, 4),
