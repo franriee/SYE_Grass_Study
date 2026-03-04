@@ -1,0 +1,44 @@
+---
+title: "rotations"
+author: "Francesca Mnenula"
+format: html
+editor: visual
+---
+
+```{r}
+library(magick)
+```
+
+
+```{r}
+# set up paths
+input_path <- "../images" 
+angles <- c(0, 90, 180, 270)
+
+# get the list of all images from images folder
+all_imgs <- list.files(input_path, pattern = "\\.(png|jpg|JPG|jpeg)$", full.names = TRUE)
+
+# loop through each image and save rotations to the their sub-directories
+message(paste("Processing", length(all_imgs), "images from", input_path))
+
+for(img_path in all_imgs) {
+  # Load the original image
+  img <- image_read(img_path)
+  fname <- basename(img_path)
+  
+  for(a in angles) {
+    # Rotate the image by the current angle
+    rot_img <- image_rotate(img, a)
+    
+    # Construct the path to subfolders
+    target_path <- paste0("../rot", a, "/", fname)
+    
+    # Save the rotated image
+    image_write(rot_img, target_path)
+  }
+  message(paste("Successfully saved 4 rotations for:", fname))
+}
+
+message("Done! All folders (rot0, rot90, rot180, rot270) are now populated.")
+```
+
