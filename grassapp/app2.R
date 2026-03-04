@@ -1,4 +1,4 @@
-# This is a version of the grassapp that uses plotly 
+# This version uses GitHub folders for speed but restores precise clicking logic
 
 # Load libraries
 library(shiny)
@@ -8,72 +8,33 @@ library(base64enc)
 library(jsonlite)
 library(googlesheets4)
 library(uuid)
-library(magick)
 
 # Google sheets connection
 gs4_auth(path = "sye2026-5dd46ac66f14.json")
 sheet_url <- "https://docs.google.com/spreadsheets/d/19002kMeTJ4caXqI836P4sCkHAB-WvlcL3er5T0K8E-o/edit#gid=198629460"
 
-# Source images from github repo
-folder_api <- "https://api.github.com/repos/franriee/SYE_Grass_Study/contents/images"
+# Github configuration for image retrieval
+repo_owner <- "franriee"
+repo_name <- "SYE_Grass_Study"
+
+# Use regular images folder to get the master list of filenames
+folder_api <- paste0("https://api.github.com/repos/", repo_owner, "/", repo_name, "/contents/images")
 files <- jsonlite::fromJSON(folder_api)
 
-# Create a data frame to keep the image name and URL synced
+# Create a data frame to keep the image names 
 img_master <- data.frame(
-  name = URLdecode(basename(files$download_url)), # get the file name without the space encoding
-  url = files$download_url,
+  name = files$name[grepl("\\.(png|jpg|jpeg)$", files$name, ignore.case = TRUE)], 
   stringsAsFactors = FALSE
 )
 
-# Initialize random seed using system time to vary results each run
+# Initialize random seed
 set.seed(as.numeric(Sys.time()))
 
-# Shuffling the master data frame
-# Firstly, retrieve the number of rows/images in the folder -- nrow()
-# Then create a scrambled list of those numbers -- sample() and rearrange the images
-img_master <- img_master[sample(nrow(img_master)), ]
+# Shuffling the master data frame to choose what order of photos we are going to display 
+img_master <- img_master[sample(nrow(img_master)), , drop = FALSE]
 
-# Preload the images to lessen loading time as the user moves between images
-
-# Taking the url web address of each image and converting it into 
-# text that the browser can read quicker
-# Create a col url to add to img_master that can keep the text version of the url
-message("Loading images...")
-img_master$uri <- sapply(img_master$url, function(u) {
-  raw <- curl::curl_fetch_memory(u)$content
-  paste0("data:image/png;base64,", base64encode(raw))
-})
-
-# Handle the random rotation of images
-
-# A helper function to decode base64 + rotate image + return base64 uri
-rotate_image_to_uri <- function(img_uri, angle_deg) {
-  # clean and decode the uri from bs64
-  b64 <- gsub("^data:image/[^;]+;base64,", "", img_uri)
-  # turn the text back to raw bytes to process as image
-  raw_img <- base64decode(b64)
-  
-  # read in the image with magick library
-  img <- image_read(raw_img)
-  
-  # apply the chosen rotation with the magick library
-  img_rot <- image_rotate(img, angle_deg)
-  
-  # write the image to a vector in png
-  img_bin <- image_write(img_rot, format = "png")
-  
-  # now re-encode it into a data uri for Plotly background images
-  paste0("data:image/png;base64,", base64encode(img_bin))
-}
-
-# Preprocess rotated images before looping through the images
-rotated_images <- lapply(1:nrow(img_master), function(i) { # loop through img_master where i is the image number
-  # a list of the angles to randomise from
-  angle <- sample(c(0, 90, 180, 270), 1)
-  # apply rotating function above angle to current image in img_master and save as uri_data
-  uri_data <- rotate_image_to_uri(img_master$uri[i], angle)
-  list(uri = uri_data, rotation = angle) # store as a list (rotated_images)
-})
+# Pre-assign a random rotation folder for every image for this session
+session_rotations <- sample(c(0, 90, 180, 270), nrow(img_master), replace = TRUE)
 
 # UI for application
 ui <- fluidPage(
@@ -128,25 +89,17 @@ ui <- fluidPage(
 
 # Server
 server <- function(input, output, session) {
-  # Initialise idx value for images
-  idx <- reactiveVal(1) 
-  
-  # Initialise the angle that the user will change arrow to point in
-  current_angle <- reactiveVal(0)
-  
-  # Initialise rotation value
-  rotation <- reactiveVal(0)
-  
-  # Initialise the last click by the user
-  last_click_x <- reactiveVal(0)
-  last_click_y <- reactiveVal(0)
-  
-  # Generate a unique ID for this specific user session
+  # Initialise values
+  idx <- reactiveVal(1) # idx for image number
+  current_angle <- reactiveVal(0) # for the angle that the user will change to point in a specific direction
+  rotation <- reactiveVal(0) # what orientation the image should be in -- thus what folder we should look at
+  last_click_x <- reactiveVal(0.5) # click vals
+  last_click_y <- reactiveVal(0.5)
   user_session_id <- UUIDgenerate()
   
-  # Re-initialise/update rotation state when index changes -- so the previous image remembers what angle it rotated by
+  # Update rotation state when index changes
   observeEvent(idx(), {
-    rotation(rotated_images[[idx()]]$rotation)
+    rotation(session_rotations[idx()])
   })
   
   # Display the counter
@@ -154,21 +107,20 @@ server <- function(input, output, session) {
     paste0("Image: ", idx(), " / ", nrow(img_master))
   })
   
-  # Get current rotated image's uri
-  rotated_uri <- reactive({
-    rotated_images[[idx()]]$uri
-  })
-  
-  # Draw and render the plot
+  # Render the plot
   output$img_display <- renderPlotly({
-    req(rotated_images[[idx()]]) # require that this is not null, an image exists
+    req(idx()) # index should be valid
     
-    # keep variable values
-    n <- 100
+    # Construct the GitHub URL based on rotation folder
+    img_filename <- img_master$name[idx()]
+    github_raw_url <- paste0("https://raw.githubusercontent.com/", repo_owner, "/", repo_name, "/main/rot", 
+                             rotation(), "/", img_filename)
+    
+    # Variables for plotly
+    n <- 200
     g <- seq(0, 1, length.out = n)
     z <- matrix(0, n, n)
     
-    # plotly drawing details
     plot_ly(
       x = g, y = g, z = z,
       type = "heatmap",
@@ -181,47 +133,37 @@ server <- function(input, output, session) {
         xaxis = list(range = c(0, 1), visible = FALSE, fixedrange = TRUE),
         yaxis = list(range = c(0, 1), visible = FALSE, fixedrange = TRUE, scaleanchor = "x"),
         images = list(list(
-          source = rotated_images[[idx()]]$uri,
+          source = github_raw_url,
           x = 0, y = 1, sizex = 1, sizey = 1,
           xref = "x", yref = "y", sizing = "contain", layer = "below"
         )),
         margin = list(l=0, r=0, t=0, b=0),
-        annotations = list(list(
-          x = 0.5, y = 0.5,
-          ax = 0.5, ay = 0.5,
-          xref = "x", yref = "y",
-          axref = "x", ayref = "y",
-          showarrow = TRUE,
-          arrowwidth = 1,
-          arrowhead = 1,
-          arrowcolor = "rgba(0,0,0,0)",
-          text = ""
-        ))
+        annotations = list() # Clear old arrows on re-render
       ) %>%
       config(displayModeBar = FALSE)
   })
   
-  # Listen for the event that will happen upon plotly click
+  # Listen for plotly click
   observeEvent(event_data("plotly_click", source = "grass_plot"), {
     d <- event_data("plotly_click", source = "grass_plot")
-    req(d)
+    req(d) # require that the click is not null
     
-    # Update the last clicks
+    # Update the last saved clicks
     last_click_x(d$x)
     last_click_y(d$y)
     
-    # What is the change?
+    # Angle calculation from center (0.5, 0.5)
     dx <- d$x - 0.5
     dy <- d$y - 0.5
     
-    # # Convert x,y to degrees (using atan2)
-    # Gemini: R's atan2 is (y, x). Adjust the calculation to make 0 degrees "North/Up
+    # Convert x,y to degrees (using atan2)
+    # Gemini: R's atan2 is (y, x). Adjust the calculation to make 0 degrees "North/Up"
     res_angle <- (atan2(dx, dy) * 180 / pi) %% 360
-    
-    # Update the current angle to what the user entered post conversion
     current_angle(res_angle)
     
-    # Update and draw the arrow based on entered angle
+    # Update arrow
+    # plotlyProxy to modify only the annotation layer of the plot
+    # relayout updates the arrow position instantly without re-rendering the background grass image
     plotlyProxy("img_display", session) %>%
       plotlyProxyInvoke("relayout", list(
         annotations = list(list(
@@ -229,6 +171,7 @@ server <- function(input, output, session) {
           ax = 0.5, ay = 0.5,
           xref = "x", yref = "y",
           axref = "x", ayref = "y",
+          text = "", 
           showarrow = TRUE,
           arrowwidth = 5,
           arrowhead = 3,
@@ -239,17 +182,17 @@ server <- function(input, output, session) {
   
   # Submitting the entry
   observeEvent(input$submit_btn, {
-    
-    # Retrieve the latest saved click coordinates
+    # Get the click
     cx <- last_click_x()
     cy <- last_click_y()
-    
-    # Calculate magnitude
     dx <- cx - 0.5
     dy <- cy - 0.5
     mag <- sqrt(dx^2 + dy^2)
     
-    # Add the new data to the Google Sheet
+    # Add to Google Sheet
+    # Upon submission, create the row of data by creating a df
+    # Make sure to retrieve the name of the image the user is seeing
+    # Add the new data to the Google Sheet (sheet)
     sheet_append(sheet_url, data.frame(
       UserID = user_session_id,
       Image = img_master$name[idx()], 
@@ -262,6 +205,7 @@ server <- function(input, output, session) {
       Magnitude = round(mag, 2)
     ), sheet = "Results")
     
+    # If we are not at the end, then
     # Automatically moving to next image after submitting
     if (idx() < nrow(img_master)) {
       idx(idx() + 1)
@@ -271,24 +215,13 @@ server <- function(input, output, session) {
       last_click_x(0.5)
       last_click_y(0.5)
       
-      # Clear the arrow for new image
+      # Clear visual arrow
       plotlyProxy("img_display", session) %>%
-        plotlyProxyInvoke("relayout", list(
-          annotations = list(list(
-            x = 0.5, y = 0.5,
-            ax = 0.5, ay = 0.5,
-            xref = "x", yref = "y",
-            axref = "x", ayref = "y",
-            showarrow = TRUE,
-            arrowwidth = 1,
-            arrowhead = 1,
-            arrowcolor = "rgba(0,0,0,0)",
-            text = ""
-          ))
-        ))
+        plotlyProxyInvoke("relayout", list(annotations = list()))
     } else {
+      # When user is done, tell them the study is complete
       showModal(modalDialog(
-        p("Thank you for contributing to this SYE Study. Your data has been saved."),
+        p("Thank you for contributing to this SYE Study. Your data has been saved. You may now close this browser window."),
       ))
     }
   })
