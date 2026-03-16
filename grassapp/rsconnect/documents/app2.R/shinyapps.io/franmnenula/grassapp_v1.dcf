@@ -5,7 +5,7 @@ account: franmnenula
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 16685387
-bundleId: 11659297
+bundleId: 11694395
 url: https://franmnenula.shinyapps.io/grassapp_v1/
 version: 1
 asMultiple: FALSE

@@ -37,9 +37,16 @@ library(ggplot2)
 ## Extracting Angles and Magnitudes from Images
 
 ```{r}
+# Define the rotation folders we will parse through
+rot_folders <- c("rot0", "rot90", "rot180", "rot270")
+
+for (rot in rot_folders) {
+
 # Define the the input and output directories
-input_dir <- "../images"
-output_data_dir <- "../output/angles_mags"
+input_dir <- file.path("../", rot)
+output_data_dir <- file.path("../output/angles_mags", rot)
+
+dir.create(output_data_dir, showWarnings = FALSE, recursive = TRUE)
 
 # Initialize the image files we will parse through
 image_files <- list.files(input_dir, # look into the input_dir and return the list of files there
@@ -48,10 +55,10 @@ image_files <- list.files(input_dir, # look into the input_dir and return the li
                           ) 
 
 for (image in image_files) { # this goes through each image in the image_files list
-  cat("Processing:", basename(image), "\n")
+  cat("Processing:", rot, basename(image), "\n")
   flush.console()
   
-  img <- load.image(image) # load the image be viewed now
+  img <- load.image(image) # load the image being viewed now
   img_gray <- grayscale(img) # convert to gray scale
   dims <- dim(img_gray) # retrieve dimensions of the grayed image
   h0 <- dims[1] # the height
@@ -112,6 +119,7 @@ for (image in image_files) { # this goes through each image in the image_files l
 
 }
 
+}
 ```
 ## Retrieving dates from images
 
@@ -162,8 +170,13 @@ write_csv(exif_df, file.path(output_weighted_dir, "dates_dataset.csv"))
 
 ```{r}
 # Set up directories for the input and where to output
-input_data_dir <- "../output/angles_mags"
 output_weighted_dir <- "../output/weighted_datasets"
+
+rot_folders <- c("rot0", "rot90", "rot180", "rot270")
+
+for (rot in rot_folders) {
+
+input_data_dir <- file.path("../output/angles_mags", rot)
 
 # Initialize a df to store the full dataset
 weighted_df <- data.frame()
@@ -172,8 +185,6 @@ dataset_files <- list.files(input_data_dir, pattern = "\\.csv$", full.names = TR
 
 # Loop over datasets from the input_dir where each is angles and mags of the images
 for (file in dataset_files) {
-  # if we want to see what files have been processed in case of debug later
-  # cat("Processing:", basename(file), "\n")
   
   # Get the csv file
   df <- read_csv(file, show_col_types = FALSE)
@@ -203,29 +214,36 @@ for (file in dataset_files) {
                                   quantile_75 = as.numeric(quantiles[3])
                                   )
                        )
-  
 }
 
 # Save the full dataset to output_dir
-write_csv(weighted_df, file.path(output_weighted_dir, "all_weighted_dataset.csv"))
+write_csv(weighted_df,
+          file.path(output_weighted_dir,
+                    paste0("weighted_dataset_", rot, ".csv")))
 
+}
 ```
 
-## What is the mean of the means?
 
-```{r}
-mean_of_means <- mean(weighted_df$circular_mean)
-
-mean_of_means
-```
 ```{r, message=FALSE}
 output_weighted_dir <- "../output/weighted_datasets"
 
-weighted_csv <- read_csv("../output/weighted_datasets/all_weighted_dataset.csv")
 dates_csv <- read_csv("../output/weighted_datasets/dates_dataset.csv")
+
+rot_folders <- c("rot0", "rot90", "rot180", "rot270")
+
+for (rot in rot_folders) {
+
+weighted_csv <- read_csv(file.path(output_weighted_dir,
+                                   paste0("weighted_dataset_", rot, ".csv")))
+
 grass_df <- merge(dates_csv, weighted_csv)
 
-write_csv(grass_df, file.path(output_weighted_dir, "grass_df.csv"))
+write_csv(grass_df,
+          file.path(output_weighted_dir,
+                    paste0("grass_df_", rot, ".csv")))
+
+}
 ```
 
 

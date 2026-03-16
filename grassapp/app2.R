@@ -12,6 +12,7 @@ library(uuid)
 # Google sheets connection
 gs4_auth(path = "sye2026-5dd46ac66f14.json")
 sheet_url <- "https://docs.google.com/spreadsheets/d/19002kMeTJ4caXqI836P4sCkHAB-WvlcL3er5T0K8E-o/edit#gid=198629460"
+codes_sheet_url <- "https://docs.google.com/spreadsheets/d/1OFfgWM_in43GS-d2eNcBdeXbdbuWe0drYJy__wt1XVk/edit?gid=0#gid=0"
 
 # Github variables
 repo_owner <- "franriee"
@@ -22,19 +23,10 @@ folder_api <- paste0("https://api.github.com/repos/", repo_owner, "/", repo_name
 files <- jsonlite::fromJSON(folder_api)
 
 # Create a data frame to keep the image names 
-img_master <- data.frame(
+img_master_global <- data.frame(
   name = files$name[grepl("\\.(png|jpg|jpeg)$", files$name, ignore.case = TRUE)], 
   stringsAsFactors = FALSE
 )
-
-# Initialize random seed
-set.seed(as.numeric(Sys.time()))
-
-# Shuffling the master data frame to choose what order of photos we are going to display 
-img_master <- img_master[sample(nrow(img_master)), , drop = FALSE]
-
-# Pre-assign a random rotation folder for every image for this session
-session_rotations <- sample(c(0, 90, 180, 270), nrow(img_master), replace = TRUE)
 
 # UI for application
 ui <- fluidPage(
@@ -46,12 +38,12 @@ ui <- fluidPage(
       h4(strong("How to participate:")),
       tags$ol(
         tags$li("Look at the general flow of the grass in the photo below."),
-        tags$li(strong("Click anywhere on the image"), " and the purple arrow will point toward your click."),
-        tags$li("You can adjust the angle of the arrow by clicking different spots until it matches the grass 
-                direction of most of the grass in the photo. (Note that the length of the arrow doesn’t matter for this study.)"),
-        #tags$li("Adjust the arrow by clicking different spots until it matches the grass direction of most of the grass in the photo."),
+        tags$li(strong("Click anywhere on the image"), " and a purple arrow will point toward your click."),
+        tags$li("Adjust the angle of the arrow by clicking different spots until it matches the grass 
+                direction of most of the grass in the photo. (Note that the length of the arrow does not matter for this study.)"),
         tags$li("Click ", strong("Submit & Next Image"), " to lock in your answer.")
-      )
+      ),
+      tags$p(em(strong("NB:"), " Some images may be rotated; simply match the arrow to the direction of the grass."))
   ),
   
   # Notes
@@ -89,13 +81,24 @@ ui <- fluidPage(
 
 # Server
 server <- function(input, output, session) {
+  # Create a session-specific shuffled copy of the images
+  img_master <- img_master_global[sample(nrow(img_master_global)), , drop = FALSE]
+  
+  # Pre-assign a random rotation folder for every image for this session
+  session_rotations <- sample(c(0, 90, 180, 270), nrow(img_master), replace = TRUE)
+  
   # Initialise values
   idx <- reactiveVal(1) # idx for image number
   current_angle <- reactiveVal(0) # for the angle that the user will change to point in a specific direction
   rotation <- reactiveVal(0) # what orientation the image should be in -- thus what folder we should look at
   last_click_x <- reactiveVal(0.5) # click vals
   last_click_y <- reactiveVal(0.5)
+  
+  # Generate a userid for each session
   user_session_id <- UUIDgenerate()
+  
+  # Generate a unique 10-character completion code (letters + numbers)
+  completion_code <- gsub("-", "", substr(UUIDgenerate(), 1, 10))
   
   # Update rotation state when index changes
   observeEvent(idx(), {
@@ -219,9 +222,17 @@ server <- function(input, output, session) {
       plotlyProxy("img_display", session) %>%
         plotlyProxyInvoke("relayout", list(annotations = list()))
     } else {
-      # When user is done, tell them the study is complete
+      # When user is done:
+      # 1. Add their completion_code to the spreadsheet
+      sheet_append(codes_sheet_url, data.frame(
+        Code = completion_code
+      ), sheet = "Codes")
+      
+      # Tell them the study is complete
       showModal(modalDialog(
-        p("Thank you for contributing to this SYE Study. Your data has been saved. You may now close this browser window."),
+      p(strong("Study Complete! "), "Thank you for contributing to this SYE Study. Your data has been saved and you may now close this browser window. 
+      If you need to verify that you completed this study, your verification code is ", strong(completion_code), 
+        ". Note that if you redo the study, you will get another unique code.")
       ))
     }
   })
