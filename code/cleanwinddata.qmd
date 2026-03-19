@@ -1,0 +1,47 @@
+---
+title: "wind"
+author: "Francesca Mnenula"
+format: html
+---
+
+### About
+
+This qmd file will clean the spreadsheet of weather data retrieved from the St. Lawrence Living Lab.
+
+```{r, warning=FALSE}
+# Load libraries
+library(readr)
+library(tidyverse)
+```
+
+
+```{r, warning=FALSE, message=FALSE}
+# Directory of wind data
+files <- list.files(path = "../winddata/", pattern = "*.csv", full.names = TRUE)
+```
+
+```{r, message=FALSE, warning=FALSE}
+# Initialise df
+winddata_df<- data.frame()
+  
+# Create a df for all the daily wind data
+for (file in files) {
+  file_read = read_csv(file, col_names = FALSE)
+  winddata_df <- bind_rows(winddata_df, file_read)
+}
+```
+
+
+```{r}
+# Review the dataset
+winddata_df
+```
+
+```{r}
+file_name <- paste0("../winddata/winddata", ".csv")
+
+# Save the dataset to a file in the winddata folder
+write_csv(winddata_df, file_name)
+
+```
+
