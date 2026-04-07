@@ -1,14 +1,14 @@
 ---
-title: "wind"
+title: "Cleaning Raw Wind Data"
 author: "Francesca Mnenula"
 format: html
 ---
 
 ### About
 
-This qmd file will clean the spreadsheet of weather data retrieved from the St. Lawrence Living Lab.
+This qmd file will clean the spreadsheet of weather data retrieved from the St. Lawrence Living Lab by combining the files of daily wind data into one csv file.
 
-```{r, warning=FALSE}
+```{r, warning=FALSE, message=FALSE}
 # Load libraries
 library(readr)
 library(tidyverse)
@@ -26,11 +26,13 @@ winddata_df<- data.frame()
   
 # Create a df for all the daily wind data
 for (file in files) {
-  file_read = read_csv(file, col_names = FALSE)
+  file_read = read_csv(file, col_names = FALSE) %>%
+    mutate(X1 = ymd_hms(X1), # convert to timestamp
+           across(X2:X23, as.double) # convert to double
+  ) 
   winddata_df <- bind_rows(winddata_df, file_read)
 }
 ```
-
 
 ```{r}
 # Review the dataset

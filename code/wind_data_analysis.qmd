@@ -1,0 +1,112 @@
+---
+title: "Analysing Wind Data from Living Lab"
+format: html
+author: Francesca Mnenula
+---
+
+### About
+
+This qmd file will analyse weather data retrieved from the St. Lawrence Living Lab.
+
+```{r, warning=FALSE, message=FALSE}
+# Load libraries
+library(readr)
+library(tidyverse)
+library(tectonicr)
+```
+
+```{r, message=FALSE, warning=FALSE}
+# Read in csv files
+file <- "../winddata/winddata.csv"
+wind_csv <- read_csv(file)
+```
+
+```{r}
+# Quick view
+wind_csv
+```
+
+```{r}
+# Trim the dataset to only be the date, windspeed, and direction
+wind_csv <- wind_csv %>% 
+  select(X1, 
+         X14, 
+         X15) %>% 
+  rename(date = X1,
+         angle = X14,
+         speed = X15) %>%
+  mutate(date_only = date(date),
+         month = month(date_only)) %>% # have a column of month only
+  select(date, date_only, angle, speed)
+```
+
+```{r}
+# Quick view
+wind_csv
+```
+
+
+```{r}
+# Get a df that shows max speed with its associated direction
+daily_wind <- 
+  wind_csv %>%
+  group_by(date_only) %>%
+  slice_max(speed, n = 1, with_ties = FALSE) %>%  # pick max-speed row -- HOW TO HANDLE TIES? with_ties = FALSE forces R to pick the first
+  ungroup() %>%
+  mutate(
+    max_speed = speed) %>%
+  select(date, date_only, max_speed, angle)                  
+```
+
+
+```{r}
+# Quick view
+daily_wind
+```
+
+```{r}
+wind_csv
+```
+
+```{r}
+wind_csv %>% group_by(date_only) %>% summarise(mean(angle))
+```
+
+
+```{r, message=FALSE, warning=FALSE}
+# Get a df circular stats
+wind_csv <- wind_csv %>%
+  group_by(date_only) %>% # group the data by date
+  summarise( # extract circular stats
+    circular_mean = circular_mean(angle, axial = TRUE, na.rm = TRUE), 
+    circular_var  = circular_var(angle, axial = TRUE, na.rm = TRUE), 
+    circular_median = circular_median(angle, axial = TRUE, na.rm = TRUE),
+    circular_IQR = circular_IQR(angle, axial = TRUE, na.rm = TRUE)
+  ) 
+```
+
+
+```{r}
+wind_csv
+```
+
+```{r}
+# Join the tables
+merged_wind_df <- 
+  inner_join(daily_wind, wind_csv, by = c("date_only")) %>% 
+  mutate(month = month(date_only)) %>% 
+  select(date_only, month, max_speed, angle, circular_mean, circular_var, circular_median, circular_IQR)
+```
+
+```{r}
+merged_wind_df
+```
+
+```{r}
+# Directory for where to save the file
+file_name <- paste0("../output/wind_summaries/winddataanalysis.csv")
+
+# Save the dataset to a file in the wind_summaries folder
+write_csv(merged_wind_df, file_name)
+```
+

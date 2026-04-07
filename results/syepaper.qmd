@@ -6,13 +6,16 @@ toc: true
 embed-resources: true
 ---
 
+## Abstract
+
+We explore the use gradient analysis adapted from some components of the Histogram of Oriented Gradients (HOG) to estimate grass orientation from images taken from the St. Lawrence Living Lab. The results of this algorithm are going to be compared to human-generated input  to validate the algorithm's accuracy compared to human observations to ensure the tool is accurate enough to support community-led climate monitoring. This comparison allows us to evaluate the gradient analysis' ability to recover grass orientation from raw grass images compared to what a human would naturally choose as predominate grass orientation in an image. The goal is automate the estimation of grass orientation from images to understand wind patterns. These results provide a first step toward potential applications that could help communities monitor changes in local wind patterns from grass images in fields amidst climate-driven environmental changes.
+
+
 ## 1. Introduction
 
 Understanding vegetation orientation matters for many agricultural activities. In Arctic communities, residents have long relied on Traditional Ecological Knowledge (TEK), in particular, physically observing how grass lays, to guide hunting and subsistence activities. However, changes in climate and a lack of historical wind data in harsh weather conditions have made these patterns harder to predict and keep track of. By using image analysis, we hope to support and recalibrate this TEK so the community can track shifts in wind direction that affect weather, sea ice, and subsistence activities. Our goal is to develop reliable and efficient data science methods for measuring grass orientation from field images to better understand changing wind patterns in Savoonga, Alaska. 
 
 ## 2. Background
-
-
 
 We explore the use of Histogram of Oriented Gradients (HOG) to automate the estimation of grass orientation from images to understand wind patterns. The results of this algorithm are going to be compared to human-generated input  to validate the algorithm's accuracy compared to human observations to ensure the tool is accurate enough to support community-led climate monitoring.
 

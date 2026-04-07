@@ -1,0 +1,156 @@
+---
+title: "Compare HOG and Humans"
+author: "Francesca Mnenula"
+format: html
+editor: visual
+---
+
+## This qmd will compare the results obtained from human observation and from the HOG algorithm.
+
+```{r}
+# Libraries
+library(readr)
+library(tidyverse)
+```
+
+
+```{r, warning=FALSE, message=FALSE}
+# Load data
+human_df <- read_csv("../output/wind_summaries/humangrassanalysis.csv")
+hog_df <- read_csv("../output/weighted_datasets/all_weighted_dataset.csv")
+
+```
+
+```{r}
+hog_df
+```
+
+
+
+```{r}
+# Calculate distances between human vs hog
+diff_df <- data.frame(
+  #image = human_df$Image,
+  image = hog_df$image_name,
+  human_angle = human_df$circular_mean,
+  hog_angle = hog_df$circular_mean,
+  circular_distance = circular_distance(human_df$circular_mean, hog_df$circular_mean, axial = TRUE, na.rm = TRUE))
+
+diff_df
+```
+
+```{r}
+# Find images with minimum angle differences
+diff_df %>% slice_min(circular_distance, n = 50)
+
+```
+
+
+```{r, warning=FALSE, message=FALSE, fig.width=16, fig.height=20}
+# List of image names
+images <- c("LL grass24 March 2023", "DJI_0362", "DJI_0346", "DJI_0358",
+            "LL grass10 March 2023", "DJI_0363", "DJI_0373",
+            "LL grass4 March 2023", "LL grass9 March 2023", "DJI_0345", "LL grass8 March 2023") # last image is a test
+```
+
+```{r}
+# A df to retrieve circular mean of angle for hog and humans to plot on polar plot
+filtered_df <- diff_df %>%
+  filter(image %in% images)
+
+filtered_df
+```
+
+
+```{r, warning=FALSE, message=FALSE, fig.width=16, fig.height=20}
+# create a df to combine image files
+all_df <- data.frame()
+
+# loops through the images to create file
+for (image in images) {
+  file_path <- paste0("../output/angles_mags/", image, ".csv")
+  df <- read_csv(file_path)
+  df$image <- image   # add column for faceting
+  all_df <- bind_rows(all_df, df)
+}
+
+# create plots and facet wrap them
+ggplot(all_df, aes(x = theta)) +
+  geom_histogram(
+    colour = "black", 
+    fill = "darkgreen", 
+    breaks = seq(0, 360, length.out = 17.5)
+  ) +
+  coord_polar(theta = "x", start = 0, direction = 1) +
+  scale_x_continuous(
+    limits = c(0, 360),
+    breaks = c(0, 45, 90, 135, 180, 225, 270, 315),
+    labels = c("N", "NE", "E", "SE", "S", "SW", "W", "NW")
+  ) +
+  facet_wrap(~image, ncol = 3) +
+  # Human mean arrow
+  geom_segment(
+    data = filtered_df,
+    aes(
+      x = human_angle,
+      xend = human_angle,
+      y = 0,
+      yend = 8000
+    ),
+    color = "darkblue",
+    size = 1.5,
+    arrow = arrow(length = unit(0.2, "cm")),
+    inherit.aes = FALSE
+  ) +
+  # HOG mean arrow
+  geom_segment(
+    data = filtered_df,
+    aes(
+      x = hog_angle,
+      xend = hog_angle,
+      y = 0,
+      yend = 8000
+    ),
+    color = "darkred",
+    size = 1.5,
+    arrow = arrow(length = unit(0.2, "cm")),
+    inherit.aes = FALSE
+    ) +
+  theme_minimal() +
+  labs(x = "") +
+  theme(
+    plot.margin = margin(t = 0, r = 10, b = 0, l = 10), 
+    aspect.ratio = 1,
+    axis.title.y = element_blank()
+    )
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

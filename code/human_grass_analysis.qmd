@@ -1,0 +1,72 @@
+---
+title: "humanwindanalysis"
+author: "Francesca Mnenula"
+format: html
+---
+
+### About
+
+This qmd file will analyse the grass data collected using the R Shiny Grass App.
+
+```{r, warning=FALSE, message=FALSE}
+# Load libraries
+library(readr)
+library(tidyverse)
+library(tectonicr)
+```
+
+```{r, message=FALSE, warning=FALSE}
+# Read in csv files
+file <- "../humangrassdata/humangrassdata.csv"
+grass_csv <- read_csv(file)
+```
+
+```{r}
+# Review the dataset
+grass_csv
+```
+
+
+```{r}
+# Create a df that summarises the circular stats of the values entered by the humans validating the grass image orientations
+humangrassanalysis_df <-
+  grass_csv %>%
+  filter(Magnitude != 0) %>% # filter those that may have been accidentally skipped due to the lag in app
+  group_by(Image) %>% # to get the average results across everyone who did it
+  summarise(circular_mean = circular_mean(True_Angle, axial = TRUE, na.rm = TRUE),
+            circular_var = circular_var(True_Angle, axial = TRUE, na.rm = TRUE),
+            circular_median = circular_median(True_Angle, axial = TRUE, na.rm = TRUE),
+            circular_IQR = circular_IQR(True_Angle, axial = TRUE, na.rm = TRUE))
+  
+```
+
+
+```{r}
+# Review
+humangrassanalysis_df
+```
+
+```{r}
+# Directory for where to save the file
+file_name <- paste0("../output/wind_summaries/humangrassanalysis.csv")
+
+# Save the dataset to a file in the wind_summaries folder
+write_csv(humangrassanalysis_df, file_name)
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
