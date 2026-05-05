@@ -1,0 +1,48 @@
+---
+title: "quick"
+format: html
+editor: visual
+---
+
+
+## Plot Gradient Magnitudes as Image for each Grass Image
+
+```{r}
+library(readr)
+mags <- read_csv("../output/angles_mags/DJI_0362.csv")
+```
+
+
+```{python}
+# Save gradient magnitudes of Test Grass in image form
+
+plt.figure(figsize=(15, 8))
+plt.title('DJI_0362')
+plt.imshow(mags$mag, cmap="gray")
+plt.axis("on")
+plt.show()
+plt.tight_layout()
+plt.savefig("../output/images/DJI_0362_mag.jpg", dpi=300)
+```
+
+
+```{python}
+import pandas as pd
+import matplotlib.pyplot as plt
+
+mags = pd.read_csv("../output/angles_mags/DJI_0362.csv")
+
+# if mag is a flat array, reshape may be needed
+img = mags["mag"].values
+
+plt.figure(figsize=(15, 8))
+plt.title("DJI_0362")
+
+plt.imshow(img, cmap="gray")
+plt.axis("on")
+
+plt.tight_layout()
+plt.savefig("../output/images/DJI_0362_mag.jpg", dpi=300)
+plt.show()
+```
+

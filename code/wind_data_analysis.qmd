@@ -37,12 +37,23 @@ wind_csv <- wind_csv %>%
          speed = X15) %>%
   mutate(date_only = date(date),
          month = month(date_only)) %>% # have a column of month only
-  select(date, date_only, angle, speed)
+  select(date, date_only, month, angle, speed)
 ```
 
 ```{r}
 # Quick view
 wind_csv
+```
+
+```{r}
+# Save this frequently taken data 
+
+# Directory for where to save the file
+file_name <- paste0("../output/wind_summaries/frequentwinddata.csv")
+
+# Save the dataset to a file in the wind_summaries folder
+write_csv(wind_csv, file_name)
+
 ```
 
 
@@ -55,21 +66,13 @@ daily_wind <-
   ungroup() %>%
   mutate(
     max_speed = speed) %>%
-  select(date, date_only, max_speed, angle)                  
+  select(date, date_only, month, max_speed, angle)                  
 ```
 
 
 ```{r}
 # Quick view
 daily_wind
-```
-
-```{r}
-wind_csv
-```
-
-```{r}
-wind_csv %>% group_by(date_only) %>% summarise(mean(angle))
 ```
 
 
@@ -87,6 +90,7 @@ wind_csv <- wind_csv %>%
 
 
 ```{r}
+# Quick view
 wind_csv
 ```
 
@@ -109,4 +113,3 @@ file_name <- paste0("../output/wind_summaries/winddataanalysis.csv")
 # Save the dataset to a file in the wind_summaries folder
 write_csv(merged_wind_df, file_name)
 ```
-

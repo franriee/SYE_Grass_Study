@@ -26,6 +26,13 @@ grass_csv <- read_csv(file)
 grass_csv
 ```
 
+```{r}
+grass_csv_count <- grass_csv %>%
+  count(UserID)
+grass_csv_count
+
+```
+
 
 ```{r}
 # Create a df that summarises the circular stats of the values entered by the humans validating the grass image orientations
