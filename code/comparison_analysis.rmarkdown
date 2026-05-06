@@ -1,0 +1,731 @@
+---
+title: "Compare HOG and Humans"
+author: "Francesca Mnenula"
+format: html
+editor: visual
+---
+
+## This qmd will compare the results obtained from human observation and from the HOG algorithm.
+
+```{r, warning=FALSE, message=FALSE}
+# Libraries
+library(readr)
+library(tidyverse)
+library(tectonicr)
+library(jpeg)
+library(ggimage)
+```
+
+```{r, warning=FALSE, message=FALSE}
+# Load datasets
+human_df <- read_csv("../output/wind_summaries/humangrassanalysis.csv")
+hog_df <- read_csv("../output/weighted_datasets/all_weighted_dataset.csv")
+dates_df <- read_csv("../output/weighted_datasets/dates_dataset.csv") # to obtained when photos were taken
+monthly_wind_df <- read_csv("../output/wind_summaries/winddataanalysis.csv")
+
+```
+
+```{r}
+# Save dfs
+output_dir <- "../output/datasets"
+
+write_csv(human_df, file.path(output_dir, "human_df.csv"))
+write_csv(hog_df, file.path(output_dir, "hog_df.csv"))
+write_csv(dates_df, file.path(output_dir, "dates_df.csv"))
+write_csv(monthly_wind_df, file.path(output_dir, "monthly_wind_df.csv"))
+
+```
+
+
+```{r}
+# Calculate distances between human vs hog
+diff_df <- data.frame(
+  image = hog_df$image_name,
+  human_angle = human_df$circular_mean,
+  hog_angle = hog_df$circular_mean,
+  circular_distance = circular_distance(human_df$circular_mean, hog_df$circular_mean, axial = TRUE, na.rm = TRUE))
+
+diff_df
+
+write_csv(diff_df, file.path(output_dir, "diff_df.csv"))
+```
+
+```{r}
+# Mean circular distance
+diff_df %>% summarise(mean(circular_distance), min(circular_distance), max(circular_distance), var(circular_distance))
+```
+
+```{r}
+# Find images with minimum angle differences
+diff_df %>% slice_min(circular_distance, n = 10)
+
+```
+
+```{r}
+# Find images with maximum angle differences 
+diff_df %>% slice_max(circular_distance, n = 10)
+```
+
+```{r}
+# Add the date an image was taken to the df
+diff_df <- 
+  diff_df %>%
+  left_join(
+    dates_df %>% select(image_name, date_taken),
+    by = c("image" = "image_name")
+  ) %>%
+  mutate(month = month(date_taken)) %>% select(image, month, hog_angle, human_angle, circular_distance)
+```
+
+
+```{r, message=FALSE, warning=FALSE}
+# Plot the gradients of image DJI_0362
+file_path <- paste0("../output/angles_mags/DJI_0362.csv")
+df <- read_csv(file_path)
+df$image <- "DJI_0362" # add image col
+
+# create plots and facet wrap them
+image_0362 <- ggplot(df, aes(x = theta)) + # this draws the plot of the gradients of the image
+  geom_histogram(
+    colour = "black", 
+    fill = "darkgreen", 
+    breaks = seq(0, 360, length.out = 17.5)
+  ) +
+  coord_polar(theta = "x", start = 0, direction = 1) + # this makes it a polar plot
+  scale_x_continuous(
+    limits = c(0, 360),
+    breaks = c(0, 45, 90, 135, 180, 225, 270, 315),
+    labels = c("N", "NE", "E", "SE", "S", "SW", "W", "NW")
+  ) +
+  theme_minimal() +
+  theme(
+    plot.margin = margin(t = 0, r = 10, b = 0, l = 10), 
+    aspect.ratio = 1,
+    axis.title.y = element_blank(),
+    axis.title.x = element_blank(),
+    axis.ticks = element_blank()
+    ) 
+
+image_0362
+
+# Save the image
+ggsave("../media/image_0362.png", 
+       image_0362, 
+       width = 10, 
+       height = 8, 
+       dpi = 300)
+```
+```{r, warning=FALSE, message=FALSE}
+# Plot 0362 with grad and human lines
+file_path <- paste0("../output/angles_mags/DJI_0362.csv")
+df <- read_csv(file_path)
+df$image <- "DJI_0362" # add image col
+
+# create plots and facet wrap them
+image_0362_lined <- ggplot(df, aes(x = theta)) + # this draws the plot of the gradients of the image
+  geom_histogram(
+    colour = "black", 
+    fill = "darkgreen", 
+    breaks = seq(0, 360, length.out = 17.5)
+  ) +
+  coord_polar(theta = "x", start = 0, direction = 1) + # this makes it a polar plot
+  scale_x_continuous(
+    limits = c(0, 360),
+    breaks = c(0, 45, 90, 135, 180, 225, 270, 315),
+    labels = c("N", "NE", "E", "SE", "S", "SW", "W", "NW")
+  ) +# Add the human circular_mean arrow
+  geom_segment(
+    data = diff_df %>% filter(image == "DJI_0362"),
+    aes(
+      x = human_angle,
+      xend = human_angle,
+      y = 0,
+      yend = 8000
+    ),
+    color = "black" ,
+    size = 1.5,
+    arrow = arrow(length = unit(0.2, "cm")),
+    inherit.aes = FALSE
+  ) +
+  # Add the HOG circular_mean arrow
+  geom_segment(
+    data = diff_df %>% filter(image == "DJI_0362"),
+    aes(
+      x = hog_angle,
+      xend = hog_angle,
+      y = 0,
+      yend = 8000
+    ),
+    color = "#F0E442",
+    size = 1.5,
+    arrow = arrow(length = unit(0.2, "cm")),
+    inherit.aes = FALSE
+    ) +
+  theme_minimal() +
+  theme(
+    plot.margin = margin(t = 0, r = 10, b = 0, l = 10), 
+    aspect.ratio = 1,
+    axis.title.y = element_blank()
+    ) +
+  labs(title = "DJI_0362") +
+  theme_minimal() +
+  theme(
+    plot.margin = margin(t = 0, r = 10, b = 0, l = 10), 
+    aspect.ratio = 1,
+    axis.title.y = element_blank(),
+    plot.title = element_text(hjust = 0.5)
+    )
+
+image_0362_lined
+
+# Save the image
+ggsave("../media/image_0362_lined.png", 
+       image_0362_lined, 
+       width = 10, 
+       height = 8, 
+       dpi = 300)
+```
+```{r}
+# Placing the hog and human dominant directions onto the image
+
+# Center coordinates 
+center_x <- 200
+center_y <- 200
+
+# Radius for arrows
+r <- 180
+
+arrow_df <- diff_df %>%
+  filter(image == "DJI_0345") %>%
+  mutate(
+    human_rad = human_angle * pi / 180,
+    hog_rad   = hog_angle * pi / 180
+  )
+
+min_images <- ggplot() +
+  # Add the image to the plot
+  geom_image(
+    data = data.frame(x = center_x, y = center_y),
+    aes(x, y),
+    image = "../images/DJI_0345.JPG",
+    size = 1.2
+  ) +
+  # Add the human dominant direction arrow
+  geom_segment(
+    data = arrow_df,
+    aes(
+      x = center_x,
+      y = center_y,
+      xend = center_x + r * cos(human_rad),
+      yend = center_y + r * sin(human_rad)
+      ),
+      color = "black",
+    size = 2.5,
+    arrow = arrow(length = unit(0.2, "cm"))
+  ) +
+  # Add the HOG dominant direction arrow
+  geom_segment(
+    data = arrow_df,
+    aes(
+      x = center_x,
+      y = center_y,
+      xend = center_x + r * cos(hog_rad),
+      yend = center_y + r * sin(hog_rad)
+      ), 
+    color = "#F0E442",
+    size = 2.5,
+    arrow = arrow(length = unit(0.2, "cm"))
+  ) +
+  coord_fixed(xlim = c(0, 400), ylim = c(0, 400)) +
+  theme_void() + 
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title = element_blank()
+  )
+
+# Save the image
+ggsave("../media/min_images.png", 
+       min_images, 
+       width = 10, 
+       height = 8, 
+       dpi = 300)
+
+```
+
+
+```{r}
+# Placing the hog and human dominant directions onto the image
+
+# Center coordinates 
+center_x <- 200
+center_y <- 200
+
+# Radius for arrows
+r <- 180
+
+arrow_df <- diff_df %>%
+  filter(image == "DJI_0365") %>%
+  mutate(
+    human_rad = human_angle * pi / 180,
+    hog_rad   = hog_angle * pi / 180
+  )
+
+max_images <- ggplot() +
+  # Add the image to the plot
+  geom_image(
+    data = data.frame(x = center_x, y = center_y),
+    aes(x, y),
+    image = "../images/DJI_0365.JPG",
+    size = 1.2
+  ) +
+  # Add the human dominant direction arrow
+  geom_segment(
+    data = arrow_df,
+    aes(
+      x = center_x,
+      y = center_y,
+      xend = center_x + r * cos(human_rad),
+      yend = center_y + r * sin(human_rad)
+      ),
+      color = "black",
+    size = 2.5,
+    arrow = arrow(length = unit(0.2, "cm"))
+  ) +
+  # Add the HOG dominant direction arrow
+  geom_segment(
+    data = arrow_df,
+    aes(
+      x = center_x,
+      y = center_y,
+      xend = center_x + r * cos(hog_rad),
+      yend = center_y + r * sin(hog_rad)
+      ),
+      color = "#F0E442",
+    size = 2.5,
+    arrow = arrow(length = unit(0.2, "cm"))
+  ) +
+  coord_fixed(xlim = c(0, 400), ylim = c(0, 400)) +
+  theme_void() +
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title = element_blank()
+)
+# Save the image
+ggsave("../media/max_images.png", 
+       max_images, 
+       width = 10, 
+       height = 8, 
+       dpi = 300)
+
+```
+
+```{r, message=FALSE, warning=FALSE}
+# Quick view of the monthly wind data
+monthly_wind_df
+
+```
+
+```{r, warning=FALSE, message=FALSE, fig.width=16, fig.height=20}
+# Create plots of the monthly wind data and facet wrap them
+monthplots <- ggplot(monthly_wind_df %>% filter(month %in% c(4, 5, 6, 7, 8, 9)), aes(x = circular_mean)) +
+  geom_histogram(
+    colour = "black", 
+    fill = "lightblue", 
+    breaks = seq(0, 360, length.out = 20)
+  ) +
+  coord_polar(theta = "x", start = 0, direction = 1) +
+  scale_x_continuous(
+    limits = c(0, 360),
+    breaks = c(0, 45, 90, 135, 180, 225, 270, 315),    
+    labels = c("N", "NE", "E", "SE", "S", "SW", "W", "NW")
+  ) +
+    # geom_vline(xintercept = 45, color = "yellow") +
+  facet_wrap(~month, ncol = 3) +
+  geom_vline(data = diff_df %>% filter(image == "LL grass24 March 2023")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "LL grass24 March 2023"), linewidth = 1.5) +
+    geom_vline(data = diff_df %>% filter(image == "DJI_0362")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "DJI_0362"), linewidth = 1.5) +
+    geom_vline(data = diff_df %>% filter(image == "DJI_0346")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "DJI_0346"), linewidth = 1.5) +
+    geom_vline(data = diff_df %>% filter(image == "DJI_0358")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "DJI_0358"), linewidth = 1.5) +
+    geom_vline(data = diff_df %>% filter(image == "LL grass10 March 2023")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "LL grass10 March 2023"), linewidth = 1.5) +
+    geom_vline(data = diff_df %>% filter(image == "DJI_0363")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "DJI_0363"), linewidth = 1.5) +
+  geom_vline(data = diff_df %>% filter(image == "DJI_0373")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "DJI_0373"), linewidth = 1.5) +
+  #geom_vline(data = filtered_df %>% filter(image == "LL grass4 March 2023")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "LL grass4 March 2023"), linewidth = 1.5) +
+  geom_vline(data = diff_df %>% filter(image == "LL grass9 March 2023")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "LL grass9 March 2023"), linewidth = 1.5) +
+  geom_vline(data = diff_df %>% filter(image == "DJI_0345")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "DJI_0345"), linewidth = 1.5) +
+  theme_minimal() +
+  theme(
+    plot.margin = margin(t = 0, r = 7, b = 0, l = 7), 
+    aspect.ratio = 1,
+    axis.title.y = element_blank(),
+    axis.title.x = element_blank(),
+    legend.position = "none",
+    plot.title = element_text(hjust = 0.5, size = 20)
+    ) +
+  scale_color_manual(
+  values = c(
+    "LL grass24 March 2023" = "cyan",
+    "DJI_0362" = "purple", # 3 chosen
+    "DJI_0346" = "lightgreen",
+    "DJI_0358" = "#D55E00", # 2 chosen
+    "LL grass10 March 2023" = "black",
+    "DJI_0363" = "#0072B2",
+    "DJI_0373" = "magenta",
+    #"LL grass4 March 2023" = "#999999",
+    "DJI_0345" = "yellow" # 1 chosen
+  ),
+  name = "Image"
+)
+
+# Save the image
+ggsave("../media/monthplots.png", 
+       monthplots, 
+       width = 10, 
+       height = 8, 
+       dpi = 300)
+
+```
+
+```{r}
+# For the selected image with minimal circular distance, place it's hog and human angles on top of the month's polar plot
+# Selected image is DJI_O345
+ggplot(monthly_wind_df %>% filter(month==4), aes(x = circular_mean)) +
+  geom_histogram(
+    colour = "black", 
+    fill = "lightblue", 
+    breaks = seq(0, 360, length.out = 20)
+  ) +
+  coord_polar(theta = "x", start = 0, direction = 1) +
+  scale_x_continuous(
+    limits = c(0, 360),
+    breaks = c(0, 45, 90, 135, 180, 225, 270, 315),
+    labels = c("N", "NE", "E", "SE", "S", "SW", "W", "NW")
+  ) +
+  # Add the human circular_mean arrow
+  geom_segment(
+    data = filtered_df %>% filter(image == "DJI_0345"),
+    aes(
+      x = human_angle,
+      xend = human_angle,
+      y = 0,
+      yend = 10, 
+      color = factor("Human", levels = c("Human", "HOG"))
+    ),
+    size = 1.5,
+    arrow = arrow(length = unit(0.2, "cm")),
+    inherit.aes = FALSE
+  ) +
+  # Add the HOG circular_mean arrow
+  geom_segment(
+    data = filtered_df %>% filter(image == "DJI_0345"),
+    aes(
+      x = hog_angle,
+      xend = hog_angle,
+      y = 0,
+      yend = 10, 
+      color = factor("HOG", levels = c("Human", "HOG"))
+    ),
+    size = 1.5,
+    arrow = arrow(length = unit(0.2, "cm")),
+    inherit.aes = FALSE
+    ) +
+  scale_color_manual(             
+    values = c("Human" = "black", "HOG" = "#F0E442"),
+    name = "Dominant Direction By"
+  ) +
+  theme_minimal() +
+  labs(title = "A Polar Plot of Wind Direction Distribution in April, 2023") +
+  theme(
+    plot.margin = margin(t = 0, r = 10, b = 0, l = 10), 
+    aspect.ratio = 1,
+    axis.title.y = element_blank(),
+    axis.title.x = element_blank(),
+    axis.text.y = element_blank(),
+    axis.ticks.y = element_blank()
+    ) 
+
+```
+
+
+
+```{r}
+# DJI_0345 HOG
+
+# Center coordinates 
+center_x <- 200
+center_y <- 100
+
+# Radius for arrows
+r <- 120
+
+arrow_df <- filtered_df %>%
+  filter(image == "DJI_0345") %>%
+  mutate(
+    human_rad = human_angle * pi / 180,
+    hog_rad   = hog_angle * pi / 180
+  )
+
+ggplot() +
+  # Add the image to the plot
+  geom_image(
+    data = data.frame(x = center_x, y = center_y),
+    aes(x, y),
+    image = "../images/DJI_0345.JPG",
+    size = 1.2
+  ) +
+  # Add the HOG dominant direction arrow
+  geom_segment(
+    data = arrow_df,
+    aes(
+      x = center_x,
+      y = center_y,
+      xend = center_x + r * cos(hog_rad),
+      yend = center_y + r * sin(hog_rad),
+      color = "HOG"
+    ),
+    size = 1.5,
+    arrow = arrow(length = unit(0.2, "cm"))
+  ) +
+  # Add a legend
+  scale_color_manual(values = c("HOG" = "#F0E442"), name = "Dominant Direction By") +
+  coord_fixed(xlim = c(0, 400), ylim = c(0, 200)) +
+  theme_void() +
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title = element_blank(),
+    legend.position = "none"
+  )
+
+# First to show what both HOG and Human discover
+```
+
+
+```{r}
+library(ggplot2)
+library(dplyr)
+library(magick)
+
+# Read image + get dimensions
+img <- image_read("../images/DJI_0345.JPG")
+info <- image_info(img)
+
+img_width <- info$width
+img_height <- info$height
+
+# Center coordinates (image space)
+center_x <- img_width / 2
+center_y <- img_height / 2
+
+# Radius for arrows (tune in pixel space)
+r <- 1000
+
+arrow_df <- filtered_df %>%
+  filter(image == "DJI_0345") %>%
+  mutate(
+    hog_rad = hog_angle * pi / 180
+  )
+
+ggplot() +
+  # background image in true aspect ratio space
+  annotation_raster(
+    raster = as.raster(img),
+    xmin = 0,
+    xmax = img_width,
+    ymin = 0,
+    ymax = img_height
+  ) +
+  
+  # HOG direction arrow
+  geom_segment(
+    data = arrow_df,
+    aes(
+      x = center_x,
+      y = center_y,
+      xend = center_x + r * cos(hog_rad),
+      yend = center_y + r * sin(hog_rad),
+      color = "HOG"
+    ),
+    linewidth = 1.2,
+    arrow = arrow(length = unit(0.2, "cm"))
+  ) +
+  
+  scale_color_manual(values = c("HOG" = "#F0E442"), name = "Direction") +
+  
+  coord_fixed(
+    xlim = c(0, img_width),
+    ylim = c(0, img_height),
+    expand = FALSE
+  ) +
+  
+  theme_void() +
+  theme(
+    legend.position = "none"
+  )
+```
+
+
+
+
+```{r}
+# Placing the hog and human dominant directions onto the image
+
+# Center coordinates 
+center_x <- 200
+center_y <- 100
+
+# Radius for arrows
+r <- 90
+
+arrow_df <- filtered_df %>%
+  filter(image == "DJI_0365") %>%
+  mutate(
+    human_rad = human_angle * pi / 180,
+    hog_rad   = hog_angle * pi / 180
+  ) 
+
+ggplot() +
+  # Add the image to the plot
+  geom_image(
+    data = data.frame(x = center_x, y = center_y),
+    aes(x, y),
+    image = "../images/DJI_0365.JPG",
+    size = 1.2
+  ) +
+  # Add the human dominant direction arrow
+  geom_segment(
+    data = arrow_df,
+    aes(
+      x = center_x,
+      y = center_y,
+      xend = center_x + r * cos(human_rad),
+      yend = center_y + r * sin(human_rad)
+      ), 
+    color = "black",
+    size = 1.5,
+    arrow = arrow(length = unit(0.2, "cm"))
+  ) +
+  # Add the HOG dominant direction arrow
+  geom_segment(
+    data = arrow_df,
+    aes(
+      x = center_x,
+      y = center_y,
+      xend = center_x + r * cos(hog_rad),
+      yend = center_y + r * sin(hog_rad)
+      ),
+    color = "#F0E442",
+    size = 1.5,
+    arrow = arrow(length = unit(0.2, "cm"))
+  ) +
+  coord_fixed(xlim = c(0, 400), ylim = c(0, 200)) +
+  theme_void() +
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title = element_blank()
+  )
+```
+-- NO USE BELOW
+
+```{r, warning=FALSE, message=FALSE}
+# List of image names
+images <- c("LL grass24 March 2023", "DJI_0362", "DJI_0346", "DJI_0358",
+            "LL grass10 March 2023", "DJI_0363", "DJI_0373",
+            "LL grass4 March 2023", "LL grass9 March 2023", "DJI_0345", "DJI_0357", "DJI_0365") # DJI_0357 is one with high circular_distance
+```
+
+```{r}
+# A filtered df with hog_angle and human_angles of only the selected images
+filtered_df <- diff_df %>% filter(image %in% images)
+
+write_csv(filtered_df, file.path(output_dir, "filtered_df.csv"))
+```
+
+```{r}
+# Add the date an image was taken to the df
+filtered_df <- 
+  filtered_df %>%
+  left_join(
+    dates_df %>% select(image_name, date_taken),
+    by = c("image" = "image_name")
+  ) %>%
+  mutate(month = month(date_taken)) %>% select(image, month, hog_angle, human_angle, circular_distance)
+  
+filtered_df
+```
+
+
+```{r, warning=FALSE, message=FALSE, fig.width=16, fig.height=20}
+# create a df to combine image files
+all_df <- data.frame()
+
+# loops through the images to create file of filtered images' gradients (angles and mags) 
+# to create a plot of gradients of grass in the image
+for (image in images) {
+  file_path <- paste0("../output/angles_mags/", image, ".csv")
+  df <- read_csv(file_path)
+  df$image <- image   # add image col
+  all_df <- bind_rows(all_df, df)
+}
+
+# create plots and facet wrap them
+images_facet <- ggplot(all_df, aes(x = theta)) + # this draws the plot of the gradients of the image
+  geom_histogram(
+    colour = "black", 
+    fill = "darkgreen", 
+    breaks = seq(0, 360, length.out = 17.5)
+  ) +
+  coord_polar(theta = "x", start = 0, direction = 1) + # this makes it a polar plot
+  scale_x_continuous(
+    limits = c(0, 360),
+    breaks = c(0, 45, 90, 135, 180, 225, 270, 315),
+    labels = c("N", "NE", "E", "SE", "S", "SW", "W", "NW")
+  ) +
+  facet_wrap(~image, ncol = 3) +
+  # Add the human circular_mean arrow
+  geom_segment(
+    data = filtered_df,
+    aes(
+      x = human_angle,
+      xend = human_angle,
+      y = 0,
+      yend = 8000
+    ),
+    color = "black" ,
+    size = 1.5,
+    arrow = arrow(length = unit(0.2, "cm")),
+    inherit.aes = FALSE
+  ) +
+  # Add the HOG circular_mean arrow
+  geom_segment(
+    data = filtered_df,
+    aes(
+      x = hog_angle,
+      xend = hog_angle,
+      y = 0,
+      yend = 8000
+    ),
+    color = "#F0E442",
+    size = 1.5,
+    arrow = arrow(length = unit(0.2, "cm")),
+    inherit.aes = FALSE
+    ) +
+  theme_minimal() +
+  theme(
+    plot.margin = margin(t = 0, r = 10, b = 0, l = 10), 
+    aspect.ratio = 1,
+    axis.title.y = element_blank()
+    )
+
+images_facet
+
+# Save the image
+ggsave("../media/images_facet.jpg", 
+       images_facet, 
+       width = 20, 
+       height = 18, 
+       dpi = 300)
+
+```
+

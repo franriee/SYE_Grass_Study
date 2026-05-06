@@ -97,13 +97,14 @@ image_0362 <- ggplot(df, aes(x = theta)) + # this draws the plot of the gradient
     breaks = c(0, 45, 90, 135, 180, 225, 270, 315),
     labels = c("N", "NE", "E", "SE", "S", "SW", "W", "NW")
   ) +
-  labs(title = "DJI_0362") +
   theme_minimal() +
   theme(
     plot.margin = margin(t = 0, r = 10, b = 0, l = 10), 
     aspect.ratio = 1,
     axis.title.y = element_blank(),
-    plot.title = element_text(hjust = 0.5)
+    axis.title.x = element_blank(),
+    axis.text = element_text(size = 30),
+    axis.text.y.left = element_blank()
     ) 
 
 image_0362
@@ -193,7 +194,7 @@ center_x <- 200
 center_y <- 200
 
 # Radius for arrows
-r <- 120
+r <- 180
 
 arrow_df <- diff_df %>%
   filter(image == "DJI_0345") %>%
@@ -220,7 +221,7 @@ min_images <- ggplot() +
       yend = center_y + r * sin(human_rad)
       ),
       color = "black",
-    size = 1.5,
+    size = 4,
     arrow = arrow(length = unit(0.2, "cm"))
   ) +
   # Add the HOG dominant direction arrow
@@ -233,7 +234,7 @@ min_images <- ggplot() +
       yend = center_y + r * sin(hog_rad)
       ), 
     color = "#F0E442",
-    size = 1.5,
+    size = 4,
     arrow = arrow(length = unit(0.2, "cm"))
   ) +
   coord_fixed(xlim = c(0, 400), ylim = c(0, 400)) +
@@ -262,7 +263,7 @@ center_x <- 200
 center_y <- 200
 
 # Radius for arrows
-r <- 120
+r <- 180
 
 arrow_df <- diff_df %>%
   filter(image == "DJI_0365") %>%
@@ -289,7 +290,7 @@ max_images <- ggplot() +
       yend = center_y + r * sin(human_rad)
       ),
       color = "black",
-    size = 1.5,
+    size = 4,
     arrow = arrow(length = unit(0.2, "cm"))
   ) +
   # Add the HOG dominant direction arrow
@@ -302,7 +303,7 @@ max_images <- ggplot() +
       yend = center_y + r * sin(hog_rad)
       ),
       color = "#F0E442",
-    size = 1.5,
+    size = 4,
     arrow = arrow(length = unit(0.2, "cm"))
   ) +
   coord_fixed(xlim = c(0, 400), ylim = c(0, 400)) +
@@ -329,7 +330,16 @@ monthly_wind_df
 
 ```{r, warning=FALSE, message=FALSE, fig.width=16, fig.height=20}
 # Create plots of the monthly wind data and facet wrap them
-ggplot(monthly_wind_df %>% filter(month %in% c(4, 5, 6, 7, 8, 9)), aes(x = circular_mean)) +
+monthplots <- ggplot(
+  monthly_wind_df %>%
+    filter(month %in% c(4, 5, 6, 7, 8, 9)) %>%
+    mutate(month = factor(
+      month,
+      levels = 4:9,
+      labels = c("Apr", "May", "Jun", "Jul", "Aug", "Sep")
+    )),
+  aes(x = circular_mean)
+) +
   geom_histogram(
     colour = "black", 
     fill = "lightblue", 
@@ -341,7 +351,6 @@ ggplot(monthly_wind_df %>% filter(month %in% c(4, 5, 6, 7, 8, 9)), aes(x = circu
     breaks = c(0, 45, 90, 135, 180, 225, 270, 315),    
     labels = c("N", "NE", "E", "SE", "S", "SW", "W", "NW")
   ) +
-    # geom_vline(xintercept = 45, color = "yellow") +
   facet_wrap(~month, ncol = 3) +
   geom_vline(data = diff_df %>% filter(image == "LL grass24 March 2023")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "LL grass24 March 2023"), linewidth = 1.5) +
     geom_vline(data = diff_df %>% filter(image == "DJI_0362")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "DJI_0362"), linewidth = 1.5) +
@@ -360,7 +369,9 @@ ggplot(monthly_wind_df %>% filter(month %in% c(4, 5, 6, 7, 8, 9)), aes(x = circu
     axis.title.y = element_blank(),
     axis.title.x = element_blank(),
     legend.position = "none",
-    plot.title = element_text(hjust = 0.5, size = 20)
+    axis.text = element_text(size = 16),
+    axis.text.y.left = element_blank(),
+    strip.text = element_text(size = 16)
     ) +
   scale_color_manual(
   values = c(
@@ -376,6 +387,13 @@ ggplot(monthly_wind_df %>% filter(month %in% c(4, 5, 6, 7, 8, 9)), aes(x = circu
   ),
   name = "Image"
 )
+
+# Save the image
+ggsave("../media/monthplots.png", 
+       monthplots, 
+       width = 10, 
+       height = 8, 
+       dpi = 300)
 
 ```
 
@@ -423,7 +441,7 @@ ggplot(monthly_wind_df %>% filter(month==4), aes(x = circular_mean)) +
     inherit.aes = FALSE
     ) +
   scale_color_manual(             
-    values = c("Human" = "#CC79A7", "HOG" = "#F0E442"),
+    values = c("Human" = "black", "HOG" = "#F0E442"),
     name = "Dominant Direction By"
   ) +
   theme_minimal() +
@@ -685,7 +703,7 @@ images_facet <- ggplot(all_df, aes(x = theta)) + # this draws the plot of the gr
       y = 0,
       yend = 8000
     ),
-    color = "#CC79A7" ,
+    color = "black" ,
     size = 1.5,
     arrow = arrow(length = unit(0.2, "cm")),
     inherit.aes = FALSE
