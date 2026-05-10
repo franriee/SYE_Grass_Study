@@ -2,7 +2,6 @@
 title: "Compare HOG and Humans"
 author: "Francesca Mnenula"
 format: html
-editor: visual
 ---
 
 ## This qmd will compare the results obtained from human observation and from the HOG algorithm.
@@ -35,7 +34,6 @@ write_csv(dates_df, file.path(output_dir, "dates_df.csv"))
 write_csv(monthly_wind_df, file.path(output_dir, "monthly_wind_df.csv"))
 
 ```
-
 
 ```{r}
 # Calculate distances between human vs hog
@@ -77,7 +75,6 @@ diff_df <-
   mutate(month = month(date_taken)) %>% select(image, month, hog_angle, human_angle, circular_distance)
 ```
 
-
 ```{r, message=FALSE, warning=FALSE}
 # Plot the gradients of image DJI_0362
 file_path <- paste0("../output/angles_mags/DJI_0362.csv")
@@ -116,6 +113,7 @@ ggsave("../media/image_0362.png",
        height = 8, 
        dpi = 300)
 ```
+
 ```{r, warning=FALSE, message=FALSE}
 # Plot 0362 with grad and human lines
 file_path <- paste0("../output/angles_mags/DJI_0362.csv")
@@ -186,6 +184,76 @@ ggsave("../media/image_0362_lined.png",
        height = 8, 
        dpi = 300)
 ```
+
+```{r}
+# blurry_images
+# Placing the hog and human dominant directions onto the image
+
+# Center coordinates 
+center_x <- 200
+center_y <- 200
+
+# Radius for arrows
+r <- 180
+
+arrow_df <- diff_df %>%
+  filter(image == "DJI_0357") %>%
+  mutate(
+    human_rad = human_angle * pi / 180,
+    hog_rad   = hog_angle * pi / 180
+  )
+
+blurry_images <- ggplot() +
+  # Add the image to the plot
+  geom_image(
+    data = data.frame(x = center_x, y = center_y),
+    aes(x, y),
+    image = "../images/DJI_0357.JPG",
+    size = 1.2
+  ) +
+  # Add the human dominant direction arrow
+  geom_segment(
+    data = arrow_df,
+    aes(
+      x = center_x,
+      y = center_y,
+      xend = center_x + r * cos(human_rad),
+      yend = center_y + r * sin(human_rad)
+      ),
+      color = "black",
+    size = 4,
+    arrow = arrow(length = unit(0.2, "cm"))
+  ) +
+  # Add the HOG dominant direction arrow
+  geom_segment(
+    data = arrow_df,
+    aes(
+      x = center_x,
+      y = center_y,
+      xend = center_x + r * cos(hog_rad),
+      yend = center_y + r * sin(hog_rad)
+      ), 
+    color = "#F0E442",
+    size = 4,
+    arrow = arrow(length = unit(0.2, "cm"))
+  ) +
+  coord_fixed(xlim = c(0, 400), ylim = c(0, 400)) +
+  theme_void() + 
+  theme(
+    axis.text = element_blank(),
+    axis.ticks = element_blank(),
+    axis.title = element_blank()
+  )
+
+# Save the image
+ggsave("../media/blurry_images.png", 
+       blurry_images, 
+       width = 10, 
+       height = 8, 
+       dpi = 300)
+
+```
+
 ```{r}
 # Placing the hog and human dominant directions onto the image
 
@@ -253,7 +321,6 @@ ggsave("../media/min_images.png",
        dpi = 300)
 
 ```
-
 
 ```{r}
 # Placing the hog and human dominant directions onto the image
@@ -351,7 +418,7 @@ monthplots <- ggplot(
     breaks = c(0, 45, 90, 135, 180, 225, 270, 315),    
     labels = c("N", "NE", "E", "SE", "S", "SW", "W", "NW")
   ) +
-  facet_wrap(~month, ncol = 3) +
+  facet_wrap(~month, ncol = 2) +
   geom_vline(data = diff_df %>% filter(image == "LL grass24 March 2023")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "LL grass24 March 2023"), linewidth = 1.5) +
     geom_vline(data = diff_df %>% filter(image == "DJI_0362")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "DJI_0362"), linewidth = 1.5) +
     geom_vline(data = diff_df %>% filter(image == "DJI_0346")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "DJI_0346"), linewidth = 1.5) +
@@ -364,15 +431,15 @@ monthplots <- ggplot(
   geom_vline(data = diff_df %>% filter(image == "DJI_0345")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "DJI_0345"), linewidth = 1.5) +
   theme_minimal() +
   theme(
-    plot.margin = margin(t = 0, r = 7, b = 0, l = 7), 
+    plot.margin = margin(t = 2, r = 2, b = 2, l = 2),
     aspect.ratio = 1,
     axis.title.y = element_blank(),
     axis.title.x = element_blank(),
     legend.position = "none",
-    axis.text = element_text(size = 16),
+    axis.text = element_text(size = 14),
     axis.text.y.left = element_blank(),
     strip.text = element_text(size = 16)
-    ) +
+  ) +
   scale_color_manual(
   values = c(
     "LL grass24 March 2023" = "cyan",
@@ -457,8 +524,6 @@ ggplot(monthly_wind_df %>% filter(month==4), aes(x = circular_mean)) +
 
 ```
 
-
-
 ```{r}
 # DJI_0345 HOG
 
@@ -510,7 +575,6 @@ ggplot() +
 
 # First to show what both HOG and Human discover
 ```
-
 
 ```{r}
 library(ggplot2)
@@ -575,9 +639,6 @@ ggplot() +
   )
 ```
 
-
-
-
 ```{r}
 # Placing the hog and human dominant directions onto the image
 
@@ -637,6 +698,7 @@ ggplot() +
     axis.title = element_blank()
   )
 ```
+
 -- NO USE BELOW
 
 ```{r, warning=FALSE, message=FALSE}
@@ -665,7 +727,6 @@ filtered_df <-
   
 filtered_df
 ```
-
 
 ```{r, warning=FALSE, message=FALSE, fig.width=16, fig.height=20}
 # create a df to combine image files
