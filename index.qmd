@@ -37,9 +37,9 @@ Savoonga, Alaska shown in @fig-map is a Yupik community located on St. Lawrence 
 
 Traditional Ecological Knowledge (TEK) refers to the environmental knowledge and practices developed across generations through close relationships with the land and observation of environmental changes (@definetek). In Arctic communities such as Savoonga, TEK plays an essential role in understanding local weather patterns and guiding hunting and subsistence activities. The Arctic region's extremely harsh environmental conditions make it difficult to install and reliably maintain conventional weather-monitoring equipment, such as wind sensors. As a result, long-term instrumental records of local wind patterns that could have been used to understand weather patterns or TEK recalibration are often limited or unavailable. The cultural significance of TEK also makes it essential to support its recalibration. TEK observations are qualitative and long-term, often made by persons who hunt, fish, and gather for subsistence. This makes TEK a part of a culture’s spiritual and social fabric, offering irreplaceable ecocultural knowledge that can be thousands of years old and incorporates long-standing values (@definetek).
 
-Because of this significance of TEK in Arctic communities, a project by Dr Rosales, Dr Ramler, and Dr Torrey at St. Lawrence University proposes to measure the TEK in Savoonga that the prevailing wind direction changed from the historical northerly dominated winds 30 plus years ago to southerly and easterly dominated winds around St. Lawrence Island (SLI), on which Savoonga is located. This will serve to recalibrate the TEK of wind direction on SLI to restore the knowledge and practice of observing wind direction that is being lost with a changing Arctic (@rosales2021). 
+Because of this significance of TEK in Arctic communities, a project by Dr Rosales, Dr Ramler, and Dr Torrey at St. Lawrence University proposes to investigate the TEK observation in Savoonga that prevailing wind direction has shifted from the historical northerly dominated winds 30 plus years ago to southerly and easterly dominated winds around St. Lawrence Island (SLI), on which Savoonga is located. This will serve to recalibrate the TEK of wind direction on SLI to restore the knowledge and practice of observing wind direction that is being lost with a changing Arctic (@rosales2021). 
 
-It is for this project that tundra grasses were grown and studied at the St. Lawrence University Living Laboratory (SLU Living Lab) to serve as a controlled and accessible proxy for field conditions in Savoonga. @fig-lab shows images of the SLU Living Lab. The SLU Living Lab is a 127-acre outdoor research and teaching site located near the St. Lawrence University campus in Canton, New York. The site includes fields, forests, wetlands, and open grassland areas that support environmental monitoring and ecological research (@slulab). Although the SLU Living Lab is not an Arctic environment, it still experiences harsh winters and strong seasonal variation, meaning the grass growing cycle is constrained in ways that are somewhat comparable to tundra conditions, even if milder. Because it is difficult to repeatedly measure wind conditions in the remote and harsh environment of St. Lawrence Island, the SLU Living Lab provides a setting where wind data can be collected more systematically using wind sensors while still mimicking similar and relevant environmental constraints tundra grasses may face in the Savoonga region. This makes it possible to test and refine image-based methods against collected wind data for application to field-based TEK observations.
+It is for this project that tundra grasses were grown and studied at the St. Lawrence University Living Laboratory (SLU Living Lab) to serve as a controlled and accessible proxy for field conditions in Savoonga. @fig-lab shows images of the SLU Living Lab. The SLU Living Lab is a 127-acre outdoor research and teaching site located near the St. Lawrence University campus in Canton, New York. The site includes fields, forests, wetlands, and open grassland areas that support environmental monitoring and ecological research (@slulab). Although the SLU Living Lab is not an Arctic environment, it still experiences harsh winters and strong seasonal variation, meaning the grass growing cycle is constrained in ways that are somewhat comparable to tundra conditions, even if milder. Because it is difficult to repeatedly measure wind conditions in the remote and harsh environment of St. Lawrence Island, the SLU Living Lab provides a setting where wind data can be collected more systematically using wind sensors while still mimicking similar and relevant environmental constraints tundra grasses may face in the Savoonga region. This makes it possible to test and refine image-based methods against collected wind data for application to field-based TEK observations. Although the SLU Living Lab does not grow the same grass species found on St. Lawrence Island such as bluejoint reedgrass and tall cottongrass the grasses present at the lab respond to wind in similar ways, laying down after the growing season in the direction of prevailing winds. The lab therefore serves as a controlled proxy environment where the relationship between grass lay direction and wind data can be systematically tested using on-site wind sensors, before applying these methods to field images from Savoonga where wind sensor equipment is unavailable.
 
 ::: {#fig-lab layout-ncol=2}
 
@@ -50,7 +50,7 @@ It is for this project that tundra grasses were grown and studied at the St. Law
 Images of the SLU Living Lab (@slulivinglab).
 :::
 
-In the Savoonga region, residents employ the TEK practice of observing wind dynamics affecting tundra plants and in particular they examine bluejoint reedgrass (Calamagrostis canadensis) and tall cottongrass (Eriophorum angustifolium), in the sedge family, as indicators of predominant wind direction and wind direction. Hunters and gatherers from Savoonga observe the direction these plants lay down after the growing season as proxies for predominant wind direction and wind direction change (@rosales2021). Preliminary work on this project involved a manual process for estimating grass orientation from field from the SLU Living Lab images. For instance, quadrat plots would be outlined on the ground using meter-by-meter PVC frames oriented to geographic north as shown in @fig-compass. Each quadrat was photographed, and grass lay direction was then manually determined by tracing the orientation of individual grass blades in the image.   
+In the Savoonga region, residents employ the TEK practice of observing wind dynamics affecting tundra plants and in particular they examine bluejoint reedgrass (Calamagrostis canadensis) and tall cottongrass (Eriophorum angustifolium), in the sedge family, as indicators of predominant wind direction and wind direction change. Hunters and gatherers from Savoonga observe the direction these plants lay down after the growing season as proxies for predominant wind direction and wind direction change (@rosales2021). Preliminary work on this project involved a manual process for estimating grass orientation "from the SLU Living Lab field images. For instance, quadrat plots would be outlined on the ground using meter-by-meter PVC frames oriented to geographic north as shown in @fig-compass. Each quadrat was photographed, and grass lay direction was then manually determined by tracing the orientation of individual grass blades in the image.   
 
 ![Manual process for estimating grass orientation in grass images (@rosales2021).](compass.jpg){#fig-compass width=80%}
 
@@ -62,7 +62,7 @@ To support this manually strenuous process, we investigate how we can use image 
 
 ## Data
 
-To evaluate this gradient analysis technique's performance, we used data from the St. Lawrence University Living Laboratory (SLU Living Lab). From the SLU Living Lab, we collected 65 tundra grass images taken in April 2023. The images taken were aerial images taken using a drone, see some samples in @fig-grasses. There is a varied range of images from a birds-eye view to close-up shots. Increasing variability in the analysis, there are images with different kinds of noise such as obstructing objects on land and buildings. @fig-grasses displays the variability that may exist in each image. The red circles on these images display the different directions that could be perceived as dominant grass direction in the images. 
+To evaluate this gradient analysis technique's performance, we used data from the St. Lawrence University Living Laboratory (SLU Living Lab). From the SLU Living Lab, we collected 65 tundra grass images taken in April 2023. The images taken were aerial images taken using a drone, see some samples in @fig-grasses. There are images ranging from a birds-eye view to close-up shots. Adding variability to the analysis, there are images with different kinds of noise such as obstructing objects on land and buildings. @fig-grasses displays the variability that may exist in each image. The red circles highlight different patches of grass within each image that could each be independently interpreted as the dominant grass lay direction. This illustrates the ambiguity that can arise when assessing dominant direction from a single image a challenge that both the gradient analysis and human assessment methods would assess differently.
 
 ::: {#fig-grasses layout-ncol=3}
 
@@ -76,7 +76,7 @@ Sample SLU Living Lab Drone Grass Images. Source: Dr. Jon Rosales.
 
 :::
 
-The SLU Living Lab also collects various weather data. The lab has an installation of weather equipment that as seen in @fig-equipment, retrieves data from a wind vane, anemometer, and solar panel. This collects information about wind direction, speed, and other atmospheric characteristics. This data is logged every 15 minutes. @tbl-winddata is a table showing a snippet of the wind data collected.
+The SLU Living Lab also collects various weather data. The lab has an installation of weather equipment that as seen in @fig-equipment, retrieves data from a wind vane, anemometer, and solar panel. This collects information about wind direction, speed, and other atmospheric characteristics. This data is logged every 15 minutes. **Table 1** is a table showing a snippet of the wind data collected. The wind data shown here covers the period from April 2022 through September 2022, which corresponds to the growing season prior to the April 2023 image collection. This alignment is linked with the grasses growing season and is discussed further in the Results section.
 
 ::: {#fig-equipment layout-ncol=2}
 ![](weatherequip.jpg){#fig-equip1 width=60%}
@@ -86,7 +86,7 @@ The SLU Living Lab also collects various weather data. The lab has an installati
 Weather Equipment at the SLU Living Lab.
 :::
 
-```{r echo=FALSE, warning=FALSE, message=FALSE, label="tbl-winddata", tbl.cap = "Snippet of Wind Data Collected"}
+```{r echo=FALSE, warning=FALSE, message=FALSE}
 library(knitr)
 library(kableExtra)
 library(readr)
@@ -97,6 +97,8 @@ wind_display <- wind_data %>% select(date, angle, speed) %>% slice(117599: 11760
 
 kbl(wind_display,
     booktabs = T,
+    label="tbl-winddata",
+    caption = "Snippet of Wind Data Collected",
     col.names = c("Date", "Angle", "Speed")) %>%
   kable_styling(latex_options = c("striped", "hold_position"),
                 full_width = F) %>%
@@ -115,7 +117,7 @@ kbl(wind_display,
 
 ### Gradient Analysis Techniques 
 
-In a previous senior year research project, Ben Sunshine (@sunshine2024) investigated the Histogram of Oriented Gradients (HOG) algorithm to automate the measurement of grass lay angles. They applied the algorithm to various images sampled from the internet and grass images from the SLU Living Lab to test the algorithm's viability. Upon their uncovering of its viability, this current project proceeds with adapting the algorithm's gradient analysis techniques. The HOG algorithm, is a method that is used to capture the orientation of textures in an image. The first component of the HOG algorithm is to analyse gradients. An image is split into small patches called cells, and we compute the gradient magnitude and direction in each cell (@manavalan2020). These local gradients, magnitudes, and angles are extracted and then aggregated into vectors that describe the overall image to represent it into patterns that identify images and their texture. @fig-hog shows the raw grass image as the input, a grayscale image that is broken down into cells, and a snippet of vectors describing gradients in each cell of the image.
+In a previous senior year research project, Ben Sunshine (@sunshine2024) investigated the Histogram of Oriented Gradients (HOG) algorithm to automate the measurement of grass lay angles. They applied the algorithm to various images sampled from the internet and grass images from the SLU Living Lab to test the algorithm's viability. Upon their uncovering of its viability, this current project proceeds with adapting the algorithm's gradient analysis techniques. The HOG algorithm is a method that is used to capture the orientation of textures in an image. The first component of the HOG algorithm is to analyse gradients. An image is split into small patches called cells, and we compute the gradient magnitude and direction in each cell (@manavalan2020). These local gradients, magnitudes, and angles are extracted and then aggregated into vectors that describe the overall image to represent it into patterns that identify images and their texture. @fig-hog shows the raw grass image as the input, a grayscale image that is broken down into cells, and a snippet of vectors describing gradients in each cell of the image.
 
 ::: {#fig-hog layout="[[1,1],[-2], [1]]"}
 
@@ -131,6 +133,11 @@ Steps of HOG Gradient Analysis.
 While the full HOG algorithm divides images into structured cells and further aggregates gradients into histograms, this study focuses on the core component of the method that extracts pixel-level gradient angles and magnitudes to capture dominant directions in grass images. 
 
 The preliminary processing of the gradient analysis included loading several R packages to support image manipulation, data handling, and statistical analysis, including `tidyverse`, `imager`, `magick`, `tectonicr`, and `exif`. 
+
+```{=latex}
+\clearpage
+```
+
 
 ```r
 library(tidyverse)
@@ -159,7 +166,7 @@ For each image, the processing included loading, converting the image to graysca
   size_y = target_height)
 ```
 
-The processed image is stored as `M`. The image's structure is defined by rows and columns of pixel values. Because the `imager` package loads images as 4-dimensional arrays by default (width, height, depth, and color channels), the image is first reduced to a 2D matrix by extracting only two channels, since the grayscale image contains no color or depth information that would require additional dimensions. The dimensions of `M` are used to define image size, where `h` represents the number of pixel rows which is the height of the image and `w` which represents the number of pixel columns that is the width of the image.
+The processed image is stored as `M`. The image's structure is defined by rows and columns of pixel values. Because the `imager` package loads images as 4-dimensional arrays by default (width, height, depth, and color channels), the image is first reduced to a 2D matrix by extracting only the first channel, since the grayscale image contains no color or depth information that would require additional dimensions. The dimensions of `M` are used to define image size, where `h` represents the number of pixel rows which is the height of the image and `w` which represents the number of pixel columns that is the width of the image.
 
 ```r
   M <- img_resized
@@ -253,7 +260,7 @@ Gradient Analysis Polar Plot Visualization.
 
 To summarize the pixel-level gradient angles extracted from each image, weighted circular statistics are computed using the `tectonicr` package in R. Because grass orientation is directional data that wraps around, standard linear statistics such as a regular mean or variance are not appropriate. Circular statistics are instead used, which account for the nature of angular data. The gradient magnitude at each pixel serves as a weight, meaning pixels with stronger intensity changes indicating more defined grass edges contribute more to the overall directional estimate than pixels in flat regions.
 
-For each of the 65 images, four weighted circular statistics are computed. The circular mean is the average dominant direction of gradient angles across all pixels, weighted by magnitude, and represents the algorithm's estimate of the overall grass lay direction in the image. The circular variance measures how spread out the angles are around this mean, where a value close to 0 indicates most pixels agree on a similar direction and a value close to 1 indicates that there directions of grass in the image are more varied. The circular median is the central angle value that divides the weighted distribution in half. The circular IQR measures the spread of the middle 50% of the weighted angle distribution, capturing variability in the dominant direction without being influenced by extreme values.
+For each of the 65 images, four weighted circular statistics are computed. The circular mean is the average dominant direction of gradient angles across all pixels, weighted by magnitude, and represents the algorithm's estimate of the overall grass lay direction in the image. The circular variance measures how spread out the angles are around this mean, where a value close to 0 indicates most pixels agree on a similar direction and a value close to 1 indicates that the directions of grass in the image are more varied. The circular median is the central angle value that divides the weighted distribution in half. The circular IQR measures the spread of the middle 50% of the weighted angle distribution, capturing variability in the dominant direction without being influenced by extreme values.
 
 ```r
 # Compute weighted circular statistics
@@ -264,9 +271,9 @@ For each of the 65 images, four weighted circular statistics are computed. The c
   quantiles <- circular_quantiles(angles, w = magnitudes, axial = TRUE, na.rm = TRUE)
   
 ```
-The `axial = TRUE` argument is used throughout because as discusses earlier, the grass orientation is axial, meaning pixel-level angles map onto a 0°–180° range rather than a full 360° scale, since a grass blade pointing at 10° is indistinguishable from one pointing at 190°. The circular statistics therefore operate on the same 0°–180° scale as the extracted angles, ensuring consistency between the pixel-level gradient computation and the image-level summary statistics. These statistics are compiled into a data frame with one row per image, containing the image name, date taken, and the four circular statistics, producing a full dataset for further analysis. @tbl-gradientstats shows a sample of this dataset.
+The `axial = TRUE` argument is used throughout because as discussed earlier, the grass orientation is axial, meaning pixel-level angles map onto a 0°–180° range rather than a full 360° scale, since a grass blade pointing at 10° is indistinguishable from one pointing at 190°. The circular statistics therefore operate on the same 0°–180° scale as the extracted angles, ensuring consistency between the pixel-level gradient computation and the image-level summary statistics. These statistics are compiled into a data frame with one row per image, containing the image name, date taken, and the four circular statistics, producing a full dataset for further analysis. **Table 2** shows a sample of this dataset.
 
-```{r echo=FALSE, warning=FALSE, message=FALSE, label="tbl-gradientstats", tbl.cap = "Sample of Weighted Circular Statistics for Gradient Analysis"}
+```{r echo=FALSE, warning=FALSE, message=FALSE}
 grad_stats <- read_csv("output/weighted_datasets/weighted_dataset_rot0.csv")
 
 grad_display <- grad_stats %>% 
@@ -275,6 +282,8 @@ grad_display <- grad_stats %>%
 
 kbl(grad_display,
     booktabs = T,
+    label="tbl-gradientstats",
+    caption = "Sample of Weighted Circular Statistics for Gradient Analysis",
     col.names = c("Image", "Circ. Mean", "Circ. Variance", "Circ. Median", "Circ. IQR")) %>%
   kable_styling(latex_options = c("striped", "hold_position"),
                 full_width = F) %>%
@@ -289,7 +298,7 @@ To validate the gradient analysis results, human assessments of the same 65 SLU 
 
 ### Human Assessment of Grass Lay Using R Shiny Web App
 
-As discussed earlier, the Traditional Ecological Knowledge (TEK) of physically observing grass lay is a method used by Arctic community members. Hunters and gatherers will observe the direction plants lay down after the growing season as proxies for predominant wind direction and wind direction change. To replicate this process conducted by humans, we customized an app to retrieve volunteers' perceptions of direction that grass lays. Shiny is an R package that makes it easy to build interactive web applications straight from R (@defineshiny). We used Shiny to customize an interactive grass app to collect human assessments of the grass images dominant grass lay direction. 45 volunteers completed the assessment of all 65 grass images. Each participant session is assigned a unique `UUID` to ensure anonymity while preserving response traceability. The application presents users with the series of grass images and prompts them to indicate the dominant direction of grass lay by clicking directly on the image. Upon clicking, a visual arrow is displayed to reflect the selected direction, allowing users to adjust their response before submission. See @fig-grassapp. 
+As discussed in the Introduction, the Traditional Ecological Knowledge (TEK) of physically observing grass lay is a method used by Arctic community members. Hunters and gatherers will observe the direction plants lay down after the growing season as proxies for predominant wind direction and wind direction change. To replicate this observational process, we customized an app to retrieve volunteers' perceptions of direction that grass lays. Shiny is an R package that makes it easy to build interactive web applications straight from R (@defineshiny). We used Shiny to customize an interactive grass app to collect human assessments of the grass images' dominant grass lay direction. 45 volunteers completed the assessment of all 65 grass images. Each participant session is assigned a unique `UUID` to ensure anonymity while preserving response traceability. The application presents users with the series of grass images and prompts them to indicate the dominant direction of grass lay by clicking directly on the image. Upon clicking, a visual arrow is displayed to reflect the selected direction, allowing users to adjust their response before submission. See @fig-grassapp. 
 
 ![[Custom Shiny Grass App](https://franmnenula.shinyapps.io/grassapp_v1/)](media/grassapp.png){#fig-grassapp width=100%}
 
@@ -400,6 +409,11 @@ When a participant clicks on the image, Plotly captures the click coordinates `d
 
 In addition to the angular direction, the Euclidean distance from the image center to the click position is recorded as a magnitude value, computed from `dx` and `dy` using the Pythagorean formula. This distance serves as a proxy for response confidence where a click far from the center suggests a more deliberate directional choice, while a click at or very close to the center may indicate uncertainty in their choice of dominant grass lay. Because the arrow defaults to the center position `(0.5, 0.5)` before any click is made, a magnitude of 0 means the participant submitted without clicking, leaving the angle unchanged from its default value. We assume that these submissions do not represent a genuine assessment of grass direction and would introduce noise into the circular statistics. To address this, responses with a magnitude of exactly 0 were filtered out before computing the per-image circular statistics, retaining only submissions where the participant made a deliberate click away from the center.
 
+```{=latex}
+\clearpage
+```
+
+
 ```r
  # Get the click
     cx <- last_click_x()
@@ -435,7 +449,46 @@ codes_sheet_url <- "https://xxxxxxxx"
     ), sheet = "Results")
 ```
 
-Just as with the gradient analysis, the submitted human responses are summarized using circular statistics including circular mean, variance, median, and interquartile range that are computed per image across all 45 participants. This produces a data frame of one row per image containing the human assessment circular statistics, which is then compared directly against the gradient analysis results to evaluate how closely the algorithm's dominant direction estimate matches human perception.
+Just as with the gradient analysis, the submitted human responses are summarized using circular statistics computed per image across all 45 participants. Before computing the statistics, responses with a magnitude of 0 are filtered out as described earlier, retaining only deliberate submissions. The `True_Angle` column which represents each participant's submitted angle corrected for the random rotation applied to that image is used as the input, ensuring that all responses are on the same scale regardless of which rotation the participant saw. For each of the 65 images, the circular mean, circular variance, circular median, and circular IQR are computed across all valid participant responses again using `axial = TRUE` in order to ensure that both the gradient analysis and human assessment circular statistics are summarized on the same axial scale. This produces a data frame of one row per image containing the human assessment circular statistics as seen in **Table 3**.
+
+
+```{=latex}
+\clearpage
+```
+
+
+```r
+# Create a df that summarises the circular stats 
+humangrassanalysis_df <-
+  grass_csv %>%
+  filter(Magnitude != 0) %>% # filter 
+  group_by(Image) %>% # to get the average results across everyone who did it
+  summarise(circular_mean = circular_mean(True_Angle, axial = TRUE, na.rm = TRUE),
+            circular_var = circular_var(True_Angle, axial = TRUE, na.rm = TRUE),
+            circular_median = circular_median(True_Angle, axial = TRUE, na.rm = TRUE),
+            circular_IQR = circular_IQR(True_Angle, axial = TRUE, na.rm = TRUE))
+  
+```
+```{r echo=FALSE, warning=FALSE, message=FALSE}
+hum_stats <- read_csv("output/wind_summaries/humangrassanalysis.csv")
+
+hum_display <- hum_stats %>% 
+  select(Image, circular_mean, circular_var, circular_median, circular_IQR) %>%
+  head(8)
+
+kbl(hum_display,
+    booktabs = T,
+    label="tbl-humanstats",
+    caption = "Sample of Circular Statistics for Human Assessment",
+    col.names = c("Image", "Circ. Mean", "Circ. Variance", "Circ. Median", "Circ. IQR")) %>%
+  kable_styling(latex_options = c("striped", "hold_position"),
+                full_width = F) %>%
+  column_spec(1, width = "3.5cm") %>%
+  column_spec(2, width = "2cm") %>%
+  column_spec(3, width = "2.5cm") %>%
+  column_spec(4, width = "2.5cm") %>%
+  column_spec(5, width = "2cm")
+```
 
 The findings from both the gradient analysis techniques and the human assessment of images were compared to evaluate the validity of results obtained from the gradient analysis techniques. The next section will highlight the results as well as assess this data's association with wind data during the growing season the previous year. 
 
@@ -448,7 +501,7 @@ The findings from both the gradient analysis techniques and the human assessment
 
 ### Compare Results Between Gradient Analysis and Human Assessment
 
-To evaluate the differences between the results from the Gradient Analysis and Human Assessment, we computed the circular distances between the two methods' circular means that is the dominant direction of grass estimated from each image using both techniques. Circular distance is used rather than a simple numerical difference because grass orientation is axial data, meaning the difference between two angles must account for the circular nature of the data. The `circular_distance()` function from the `tectonicr` package computes this, returning values on a scale of 0 to 1, where 0 means the two methods agree perfectly on the same direction and 1 means they are as far apart as possible which would mean pointing in completely opposite directions measured in degrees.
+To evaluate the differences between the results from the Gradient Analysis and Human Assessment, we computed the circular distances between the two methods' circular means, which represent the dominant direction of grass estimated from each image using both techniques. The unit for the circular statistics are degrees. Circular distance is used rather than a simple numerical difference because grass orientation is axial data, meaning the difference between two angles must account for the circular nature of the data. The `circular_distance()` function from the `tectonicr` package computes this, returning values on a scale of 0 to 1, where 0 means the two methods agree perfectly on the same direction and 1 means they are as far apart as possible which corresponds to the maximum possible angular disagreement on the axial scale.
 
 ```r
 # Calculate distances between human vs hog
@@ -466,7 +519,7 @@ write_csv(diff_df, file.path(output_dir, "diff_df.csv"))
 
 To help calibrate what these values mean in practice: a circular distance of 0 indicates perfect agreement, 0.25 corresponds to a moderate directional difference of roughly 22.5°, 0.5 corresponds to a 45° difference, and 1.0 is the maximum possible.
 
-The mean circular distance across all 65 images is 0.26 with a variance of 0.09, suggesting that on average the gradient analysis and human assessment are in moderate agreement on average. The minimum circular distance of 0.0006 indicates near-perfect agreement for at least one image, while the maximum of 0.999 indicates that for at least one image the two methods produced nearly perpendicular dominant direction estimates. There are a number of images where both methods closely align, but also a number where they diverge substantially. In @fig-results, the yellow arrow represents the dominant direction estimated by the gradient analysis and the black arrow represents the human assessment, illustrating examples of both low, medium, and high circular distance cases.
+The mean circular distance across all 65 images is 0.26 with a variance of 0.09, suggesting that on average the gradient analysis and human assessment are in moderate agreement. The minimum circular distance of 0.0006 indicates near-perfect agreement for at least one image, while the maximum of 0.999 indicates that for at least one image the two methods produced nearly perpendicular dominant direction estimates. There are a number of images where both methods closely align, but also a number where they diverge substantially. In @fig-results, the yellow arrow represents the dominant direction estimated by the gradient analysis and the black arrow represents the human assessment, illustrating examples of both low, medium, and high circular distance cases.
 
 ::: {#fig-results layout-ncol=3}
 
@@ -480,7 +533,7 @@ Images Showing Circular Distance.
 
 :::
 
-There a number of reasons we assume the retrieved dominant angle differs significantly between the gradient analysis and the human assessment. 
+There are a number of reasons we assume the retrieved dominant angle differs significantly between the gradient analysis and the human assessment. 
 
 The first is that while the gradient analysis uses magnitude weighting in the circular statistics to give more influence to pixels with stronger intensity changes, this weighting is applied across all pixels in the image without first filtering out regions where no meaningful grass structure exists. Pixels in flat, texturally uniform regions such as bare soil, shadows, or background objects still produce gradient responses, and even with low magnitudes they collectively contribute to the overall dominant grass direction estimate. When many such low-magnitude pixels are spread across non-grass regions of the image, their cumulative effect can still shift the weighted circular mean away from the true grass lay direction. A human observer instinctively ignores these regions entirely, focusing attention only on areas where grass texture is clearly visible. The algorithm, by contrast, incorporates every pixel's contribution unless a magnitude threshold is explicitly applied beforehand to exclude low-confidence regions, making it more susceptible to being pulled by noise from non-grass areas of the image.
 
@@ -492,7 +545,7 @@ At the SLU Living Lab, a wind station installed adjacent to the tundra vegetatio
 
 To connect the grass images to the wind data, EXIF metadata that is the Exchangeable Image File Format information embedded in every digital image file was extracted from each drone image using the `exif` package in R (@cci2024). The `DateTimeOriginal` field was retrieved, which records the exact date the image was captured by the drone, and cleaned into a standardized date variable. Since the grass images were taken in April 2023, wind data from April through September 2022 (the full growing season prior to image capture) was used for comparison. The rationale is that grass lay direction observed in April 2023 reflects the cumulative effect of winds experienced during the 2022 growing season when the grass was actively growing and being shaped by prevailing conditions.
 
-Nine representative images where the circular distance between gradient analysis and human assessment was smallest were selected, representing the cases where both methods most confidently agreed on a dominant grass direction. The gradient analysis dominant direction for each of these nine images was overlaid as a colored vertical line on polar histograms of the monthly wind direction distributions from April through September 2022. 
+Nine representative images with the smallest circular distances between gradient analysis and human assessment were selected, representing cases of strongest agreement between the two methods on dominant grass direction. The gradient analysis dominant direction for each of these nine images was overlaid as a colored vertical line on polar histograms of the monthly wind direction distributions from April through September 2022. 
              
 In @fig-monthplots, the grass lay directions from the nine selected images are represented as colored vertical lines overlaid on each month's wind direction polar histogram. The alignment between the lines and the dominant bars of the wind histogram indicates months where grass lay direction corresponds well with prevailing wind patterns. This alignment is most evident in the spring months of April and May, which represent the early growing season when grass is most actively responding to wind exposure. This correspondence supports the use of grass lay direction as a proxy for prevailing wind direction, particularly during the growing season.
 
@@ -504,7 +557,7 @@ In @fig-monthplots, the grass lay directions from the nine selected images are r
 
 ## Conclusion
 
-Overall, we find that in several images there is strong agreement between human assessments and gradient-based estimates of dominant grass direction. In these cases, both methods produce similar results, suggesting that they can successfully capture the main direction of grass lay from images. When compared with wind data, this alignment is strongest in the spring season, which is the main growing period for tundra grass. During this time, the grass is more flexible and responsive to environmental conditions, making patterns of alignment easier to detect.
+Overall, we find that in several images there is strong agreement between human assessments and gradient-based estimates of dominant grass direction, validating the gradient analysis as a reasonable method for estimating grass lay direction automatically. In these cases, both methods produce similar results, suggesting that they can successfully capture the main direction of grass lay from images. When compared with wind data, this alignment is strongest in the spring season, which is the main growing period for tundra grass. During this time, the grass is more flexible and responsive to environmental conditions, making patterns of alignment easier to detect.
 
 However, there are still important cases where human assessments and gradient-based methods do not agree, suggesting that both approaches may have limitations. Human assessments can be affected by how clear or complex the image is, while gradient methods can be influenced by image noise, texture, or lighting conditions, and thus need algorithmic fine tuning. Because of this, further work is needed to understand when each method performs well and when it fails.
 
@@ -514,7 +567,7 @@ Based on the findings of this project, we offer the following recommendations fo
 
 **Image Collection Standards**
 
-The results show that images taken at very high angles or with blurry outlines consistently produced the highest circular distances between gradient analysis and human assessment, indicating that image quality is a significant driver of disagreement. We recommend that future drone image collection for this purpose follow standardized protocols where images should be taken directly overhead at a consistent altitude to minimize perspective distortion, during daylight hours with minimal shadow cover, and at a resolution sufficient to clearly resolve individual grass blade texture. Standardizing these factors would reduce variability in both human and computational assessments and improve the reliability of comparisons across sites and seasons.
+The results show that images taken at very high altitudes where individual grass blade texture is difficult to resolve, or images with blurry outlines, consistently produced the highest circular distances between gradient analysis and human assessment, indicating that image quality is a significant driver of disagreement. We recommend that future drone image collection for this purpose follow standardized protocols where images should be taken directly overhead at a consistent altitude to minimize perspective distortion, during daylight hours with minimal shadow cover, and at a resolution sufficient to clearly resolve individual grass blade texture. Standardizing these factors would reduce variability in both human and computational assessments and improve the reliability of comparisons across sites and seasons.
 
 **Algorithmic Improvements**
 
