@@ -253,8 +253,8 @@
   pdfcreator={LaTeX via pandoc}}
 
 
-\title{Estimating Grass Orientation from Drone Images to Determine Wind
-Patterns}
+\title{\textbf{Estimating Grass Orientation from Drone Images to
+Determine Wind Patterns}}
 \author{Francesca Mnenula}
 \date{}
 \begin{document}
@@ -273,19 +273,19 @@ we hope to discover potential ways to recalibrate this grass-related TEK
 for communities to track shifts in wind patterns that affect hunting,
 travel, and settlement patterns. We use image gradient analysis
 techniques that draw on some components of the Histogram of Oriented
-Gradients algorithm to estimate dominant grass orientation from tundra
-grass images collected at the St.~Lawrence University Living Laboratory
-(SLU Living Lab). The results of this gradient analysis are compared
-with human assessments of grass orientation to evaluate how closely the
-algorithm's results matches what people identify as the dominant grass
-direction in an image on average. These results are assessed against
-wind data collected at the SLU Living Lab to determine the association
-between grass orientation and wind direction. This automation using
-gradient analysis would present a first step toward applications that
-could help recalibrate these TEK methods that communities use to monitor
-changes in local wind patterns from field images in places where wind
-sensors cannot be used, improving the research and assessment of
-climate-driven environmental changes.
+Gradients (HOG) algorithm to estimate dominant grass orientation from
+tundra grass images collected at the St.~Lawrence University Living
+Laboratory (SLU Living Lab). The results of this gradient analysis are
+compared with human assessments of grass orientation to evaluate how
+closely the algorithm's results matches what people identify as the
+dominant grass direction in an image on average. These results are
+assessed against wind data collected at the SLU Living Lab to determine
+the association between grass orientation and wind direction. This
+automation using gradient analysis would present a first step toward
+applications that could help recalibrate these TEK methods that
+communities use to monitor changes in local wind patterns from field
+images in places where wind sensors cannot be used, improving the
+research and assessment of climate-driven environmental changes.
 \end{abstract}
 
 \renewcommand*\contentsname{Table of contents}
@@ -416,12 +416,12 @@ predominant wind direction and wind direction change. Hunters and
 gatherers from Savoonga observe the direction these plants lay down
 after the growing season as proxies for predominant wind direction and
 wind direction change (Rosales et al. (2021)). Preliminary work on this
-project involved a manual process for estimating grass orientation
-``from the SLU Living Lab field images. For instance, quadrat plots
-would be outlined on the ground using meter-by-meter PVC frames oriented
-to geographic north as shown in Figure~\ref{fig-compass}. Each quadrat
-was photographed, and grass lay direction was then manually determined
-by tracing the orientation of individual grass blades in the image.
+project involved a manual process for estimating grass orientation from
+the SLU Living Lab field images. For instance, quadrat plots would be
+outlined on the ground using meter-by-meter PVC frames oriented to
+geographic north as shown in Figure~\ref{fig-compass}. Each quadrat was
+photographed, and grass lay direction was then manually determined by
+tracing the orientation of individual grass blades in the image.
 
 \begin{figure}[H]
 
@@ -431,7 +431,7 @@ by tracing the orientation of individual grass blades in the image.
 
 }
 
-\caption{\label{fig-compass}Manual process for estimating grass
+\caption{\label{fig-compass}Manual process Of estimating grass
 orientation in grass images (Rosales et al. (2021)).}
 
 \end{figure}%
@@ -729,9 +729,7 @@ pixel does not exist on one side, a one-sided difference is used
 instead. The overall gradient magnitude at each pixel is then derived by
 combining \texttt{Gx} and \texttt{Gy} using the Pythagorean formula,
 \(\text{mag} = \sqrt{G_x^2 + G_y^2}\), which captures the strength of
-the intensity change at that location regardless of direction. The
-gradient angle is computed using the arctangent of the ratio of
-\texttt{Gy} to \texttt{Gx}, converted from radians to degrees.
+the intensity change at that location regardless of direction.
 
 \begin{Shaded}
 \begin{Highlighting}[]
@@ -752,8 +750,10 @@ gradient angle is computed using the arctangent of the ratio of
 \end{Highlighting}
 \end{Shaded}
 
-Grass blades are symmetric in appearance. This means that to the
-algorithm, a blade pointing at 10° looks the same as one pointing at
+The gradient angle is computed using the arctangent, \texttt{atan()} of
+the ratio of \texttt{Gy} to \texttt{Gx}, converted from radians to
+degrees. Grass blades are symmetric in appearance. This means that to
+the algorithm, a blade pointing at 10° looks the same as one pointing at
 190°. Because of this, within each pixel, angles are then mapped onto a
 0°--180° range. Any negative angle resulting from the arctangent
 calculation is shifted by adding 180° to bring it into this range.
