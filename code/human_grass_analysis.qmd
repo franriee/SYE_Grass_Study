@@ -13,11 +13,12 @@ This qmd file will analyse the grass data collected using the R Shiny Grass App.
 library(readr)
 library(tidyverse)
 library(tectonicr)
+library(here)
 ```
 
 ```{r, message=FALSE, warning=FALSE}
 # Read in csv files
-file <- "../humangrassdata/humangrassdata.csv"
+file <- here("humangrassdata/humangrassdata.csv")
 grass_csv <- read_csv(file)
 ```
 
@@ -55,7 +56,7 @@ humangrassanalysis_df
 
 ```{r}
 # Directory for where to save the file
-file_name <- paste0("../output/wind_summaries/humangrassanalysis.csv")
+file_name <- here("output/wind_summaries/humangrassanalysis.csv")
 
 # Save the dataset to a file in the wind_summaries folder
 write_csv(humangrassanalysis_df, file_name)

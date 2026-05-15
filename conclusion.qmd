@@ -1,0 +1,27 @@
+---
+title: "Conclusion"
+---
+
+Overall, we find that in several images there is strong agreement between human assessments and gradient-based estimates of dominant grass direction, validating the gradient analysis as a reasonable method for estimating grass lay direction automatically. In these cases, both methods produce similar results, suggesting that they can successfully capture the main direction of grass lay from images. When compared with wind data, this alignment is strongest in the spring season, which is the main growing period for tundra grass. During this time, the grass is more flexible and responsive to environmental conditions, making patterns of alignment easier to detect.
+
+However, there are still important cases where human assessments and gradient-based methods do not agree, suggesting that both approaches may have limitations. Human assessments can be affected by how clear or complex the image is, while gradient methods can be influenced by image noise, texture, or lighting conditions, and thus need algorithmic fine tuning. Because of this, further work is needed to understand when each method performs well and when it fails.
+
+### Recommendations
+
+Based on the findings of this project, we offer the following recommendations for future data collection, algorithmic improvement, and community application.
+
+**Image Collection Standards**
+
+The results show that images taken at very high altitudes where individual grass blade texture is difficult to resolve, or images with blurry outlines, consistently produced the highest circular distances between gradient analysis and human assessment, indicating that image quality is a significant driver of disagreement. We recommend that future drone image collection for this purpose follow standardized protocols where images should be taken directly overhead at a consistent altitude to minimize perspective distortion, during daylight hours with minimal shadow cover, and at a resolution sufficient to clearly resolve individual grass blade texture. Standardizing these factors would reduce variability in both human and computational assessments and improve the reliability of comparisons across sites and seasons.
+
+**Algorithmic Improvements**
+
+The gradient analysis currently computes circular statistics across all pixels in an image, including low-magnitude regions corresponding to bare soil, shadows, and background objects that carry no meaningful grass orientation signal. Even with magnitude weighting, the cumulative contribution of these regions can shift the dominant direction estimate. We recommend applying an explicit magnitude threshold filter before computing circular statistics to retain only pixels with gradient magnitudes above a meaningful level. Fine-tuning an optimal threshold that is potentially image-specific and based on the magnitude distribution would be a valuable next step toward improving the algorithm's accuracy.
+
+**Human vs. Automated Assessment**
+
+There is also potential for practical application beyond research. A simple web-based tool could allow community members or local observers to upload field images and estimate local wind direction automatically. The choice between human crowd-sourcing and automated gradient analysis likely depends on the goal and context of use. In communities like Savoonga where TEK already involves the practice of physically observing grass lay, expanding human participation through crowd-sourcing may be the more natural and culturally appropriate approach where more observers following the same traditional practice would help standardize, recalibrate, and strengthen the existing knowledge system rather than replacing it. In contrast, for research contexts where eliminating human perceptual bias and subjectivity is important, or where large volumes of images need to be processed consistently across sites, the gradient analysis offers a more scalable and repeatable alternative. The best approach therefore depends not just on image quality or algorithmic performance, but on whether the goal is to support and scale an existing human observational practice or to provide an objective computational tool independent of human judgment.
+
+### Future Work
+
+These results have shown promising agreement between human perception, computational methods, and wind data in certain conditions. At the same time, they highlight the importance of improving data collection practices, understanding sources of disagreement, and expanding fine-tuning goals. Future analysis should focus on disagreement cases in more detail to identify when vegetation direction is not a reliable indicator of wind, or when one method is more accurate than the other. It would also be useful to compare results across different years, such as using 2023 wind data and 2024 grass images, to test whether these patterns remain consistent over time and under different environmental conditions. This project could also be expanded beyond tundra grass to other vegetation types that respond to wind in different seasons. Together, these steps move toward a more robust framework for linking image-based vegetation analysis with environmental wind patterns in support of both scientific understanding and Traditional Ecological Knowledge.

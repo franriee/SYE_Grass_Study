@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.9.36">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Methods – Estimating Grass Orientation from Drone Images to Determine Wind Patterns</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-a06d91ce84fd25668039cca5222332b2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet">
+
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="nav-sidebar docked nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Estimating Grass Orientation from Drone Images to Determine Wind Patterns</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Home</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./intro.html"> 
+<span class="menu-text">Introduction</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./methods.html" aria-current="page"> 
+<span class="menu-text">Methods</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./result.html"> 
+<span class="menu-text">Results</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./conclusion.html"> 
+<span class="menu-text">Conclusion</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./references.html"> 
+<span class="menu-text">References</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item">Methods</li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#methods" id="toc-methods" class="nav-link active" data-scroll-target="#methods"><span class="header-section-number">1</span> Methods</a>
+  <ul class="collapse">
+  <li><a href="#gradient-analysis-techniques" id="toc-gradient-analysis-techniques" class="nav-link" data-scroll-target="#gradient-analysis-techniques"><span class="header-section-number">1.1</span> Gradient Analysis Techniques</a></li>
+  <li><a href="#human-assessment-of-grass-lay-using-r-shiny-web-app" id="toc-human-assessment-of-grass-lay-using-r-shiny-web-app" class="nav-link" data-scroll-target="#human-assessment-of-grass-lay-using-r-shiny-web-app"><span class="header-section-number">1.2</span> Human Assessment of Grass Lay Using R Shiny Web App</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Methods</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="methods" class="level2" data-number="1">
+<h2 data-number="1" class="anchored" data-anchor-id="methods"><span class="header-section-number">1</span> Methods</h2>
+<section id="gradient-analysis-techniques" class="level3" data-number="1.1">
+<h3 data-number="1.1" class="anchored" data-anchor-id="gradient-analysis-techniques"><span class="header-section-number">1.1</span> Gradient Analysis Techniques</h3>
+<p>In a previous senior year research project, Ben Sunshine (<span class="citation" data-cites="sunshine2024">Sunshine (<a href="#ref-sunshine2024" role="doc-biblioref">2024</a>)</span>) investigated the Histogram of Oriented Gradients (HOG) algorithm to automate the measurement of grass lay angles. They applied the algorithm to various images sampled from the internet and grass images from the SLU Living Lab to test the algorithm’s viability. Upon their uncovering of its viability, this current project proceeds with adapting the algorithm’s gradient analysis techniques. The HOG algorithm is a method that is used to capture the orientation of textures in an image. The first component of the HOG algorithm is to analyse gradients. An image is split into small patches called cells, and we compute the gradient magnitude and direction in each cell (<span class="citation" data-cites="manavalan2020">Manavalan (<a href="#ref-manavalan2020" role="doc-biblioref">2020</a>)</span>). These local gradients, magnitudes, and angles are extracted and then aggregated into vectors that describe the overall image to represent it into patterns that identify images and their texture. <a href="#fig-hog" class="quarto-xref">Figure&nbsp;1</a> shows the raw grass image as the input, a grayscale image that is broken down into cells, and a snippet of vectors describing gradients in each cell of the image.</p>
+<div id="fig-hog" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-hog-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-hog" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-raw" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-raw-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="media/rawhog.jpg" class="img-fluid figure-img" style="width:65.0%" data-ref-parent="fig-hog">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-raw-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Input Grass Image
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-hog" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-posthog" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-posthog-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="media/posthog.png" class="img-fluid figure-img" style="width:65.0%" data-ref-parent="fig-hog">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-posthog-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Grayscaled and Decomposed Grass Image
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="quarto-figure-spacer quarto-layout-cell" style="flex-basis: 100.0%;justify-content: flex-start;">
+<p>&nbsp;</p>
+</div>
+</div>
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-hog" style="flex-basis: 100.0%;justify-content: flex-start;">
+<div id="fig-df" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-df-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="media/vechog.png" class="img-fluid figure-img" style="width:70.0%" data-ref-parent="fig-hog">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-df-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(c) Snippet of Vectors Describing Grass Image
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-hog-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Steps of HOG Gradient Analysis.
+</figcaption>
+</figure>
+</div>
+<p>While the full HOG algorithm divides images into structured cells and further aggregates gradients into histograms, this study focuses on the core component of the method that extracts pixel-level gradient angles and magnitudes to capture dominant directions in grass images.</p>
+<p>The preliminary processing of the gradient analysis included loading several R packages to support image manipulation, data handling, and statistical analysis, including <code>tidyverse</code>, <code>imager</code>, <code>magick</code>, <code>tectonicr</code>, and <code>exif</code>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(magick)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(imager)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(exif)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tectonicr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>For each image, the processing included loading, converting the image to grayscale, and resizing it. Images were rescaled to a fixed height while preserving their aspect ratio to ensure consistent resolution across all images without introducing geometric distortion. The images were converted to grayscale to allow for focusing on representing pixel intensity in terms of texture and structural variation, rather than color information.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>  img <span class="ot">&lt;-</span> <span class="fu">load.image</span>(image) <span class="co"># load the image being viewed now</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  img_gray <span class="ot">&lt;-</span> <span class="fu">grayscale</span>(img) <span class="co"># convert to gray scale</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  dims <span class="ot">&lt;-</span> <span class="fu">dim</span>(img_gray) <span class="co"># retrieve dimensions of the grayed image</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  h0 <span class="ot">&lt;-</span> dims[<span class="dv">1</span>] <span class="co"># the height</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  w0 <span class="ot">&lt;-</span> dims[<span class="dv">2</span>] <span class="co"># the width</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="co"># resize to target height to keep consistent size of images</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  target_height <span class="ot">&lt;-</span> <span class="dv">200</span> </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  target_width <span class="ot">&lt;-</span> <span class="fu">max</span>(<span class="dv">1</span>, <span class="fu">round</span>(w0 <span class="sc">*</span> (target_height <span class="sc">/</span> h0))) </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># relative to target_height</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="co"># recalculate width to maintain same aspect ratio</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  img_resized <span class="ot">&lt;-</span> <span class="fu">resize</span>(img_gray, <span class="at">size_x =</span> target_width, </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">size_y =</span> target_height)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The processed image is stored as <code>M</code>. The image’s structure is defined by rows and columns of pixel values. Because the <code>imager</code> package loads images as 4-dimensional arrays by default (width, height, depth, and color channels), the image is first reduced to a 2D matrix by extracting only the first channel, since the grayscale image contains no color or depth information that would require additional dimensions. The dimensions of <code>M</code> are used to define image size, where <code>h</code> represents the number of pixel rows which is the height of the image and <code>w</code> which represents the number of pixel columns that is the width of the image.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>  M <span class="ot">&lt;-</span> img_resized</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># ensures the resized grayscale image is a 2D matrix</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">length</span>(<span class="fu">dim</span>(M)) <span class="sc">==</span> <span class="dv">4</span>) </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    M <span class="ot">&lt;-</span> M[,,<span class="dv">1</span>,<span class="dv">1</span>]</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  M <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(M)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># how many rows and cols of pixels in the images</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  h <span class="ot">&lt;-</span> <span class="fu">nrow</span>(M) </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  w <span class="ot">&lt;-</span> <span class="fu">ncol</span>(M)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The gradient magnitudes and angles were then computed for every pixel in the resized image. At each pixel at row <code>i</code> and column <code>j</code>, the gradient is measured in two directions. The horizontal gradient, <code>Gx</code>, is computed by taking the difference between the pixel values immediately to the right <code>M[i, j+1]</code> and left <code>M[i, j-1]</code> of the pixel of interest. The vertical gradient, <code>Gy</code>, is computed by taking the difference between the pixel value below <code>M[i+1, j]</code> and the pixel value above <code>M[i-1, j]</code> it. At image boundaries where a neighboring pixel does not exist on one side, a one-sided difference is used instead. The overall gradient magnitude at each pixel is then derived by combining <code>Gx</code> and <code>Gy</code> using the Pythagorean formula, <span class="math inline">\(\text{mag} = \sqrt{G_x^2 + G_y^2}\)</span>, which captures the strength of the intensity change at that location regardless of direction.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>h) {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (j <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>w) {</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    Gx <span class="ot">&lt;-</span> <span class="cf">if</span> (j <span class="sc">==</span> <span class="dv">1</span>) M[i, j<span class="sc">+</span><span class="dv">1</span>] </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>          <span class="cf">else</span> <span class="cf">if</span> (j <span class="sc">==</span> w) <span class="sc">-</span>M[i, j<span class="dv">-1</span>] </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>          <span class="cf">else</span> M[i, j<span class="sc">+</span><span class="dv">1</span>] <span class="sc">-</span> M[i, j<span class="dv">-1</span>]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    Gy <span class="ot">&lt;-</span> <span class="cf">if</span> (i <span class="sc">==</span> <span class="dv">1</span>) <span class="sc">-</span>M[i<span class="sc">+</span><span class="dv">1</span>, j] </span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>          <span class="cf">else</span> <span class="cf">if</span> (i <span class="sc">==</span> h) M[i<span class="dv">-1</span>, j] </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>          <span class="cf">else</span> M[i<span class="sc">+</span><span class="dv">1</span>, j] <span class="sc">-</span> M[i<span class="dv">-1</span>, j]</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    mag <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(Gx<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> Gy<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The gradient angle is computed using the arctangent, <code>atan()</code> of the ratio of <code>Gy</code> to <code>Gx</code>, converted from radians to degrees. Grass blades are symmetric in appearance. This means that to the algorithm, a blade pointing at 10° looks the same as one pointing at 190°. Because of this, within each pixel, angles are then mapped onto a 0°–180° range. Any negative angle resulting from the arctangent calculation is shifted by adding 180° to bring it into this range.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>angle <span class="ot">&lt;-</span> <span class="cf">if</span> (Gx <span class="sc">==</span> <span class="dv">0</span>) <span class="dv">0</span> <span class="cf">else</span> <span class="fu">atan</span>(Gy <span class="sc">/</span> Gx) <span class="sc">*</span> <span class="dv">180</span> <span class="sc">/</span> pi</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (angle <span class="sc">&lt;</span> <span class="dv">0</span>) angle <span class="ot">&lt;-</span> angle <span class="sc">+</span> <span class="dv">180</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>These values are then stored as vectors and structured as datasets describing each image. During computation, magnitudes and angles are stored row by row into lists, <code>mag_list</code> and <code>theta_list</code>, rather than directly into vectors. This is because appending to a list in R is more efficient than growing a vector element by element inside a nested loop, which would require R to copy and reallocate memory at each iteration. Once all pixel rows have been processed, the lists are converted to flat vectors using <code>unlist()</code> and combined into a data frame with one row per pixel containing the angle in degrees, the gradient magnitude, and the angle converted to radians. Because grass blades have defined, fine, and linear textures, these gradient extraction techniques effectively identify dominant directions and magnitudes. This supports our ability to capture a general trend or flow in the grass making gradient analysis useful for identifying a dominant grass lay direction.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># initialize lists to store the mags and theta</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>mag_list <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"list"</span>, h)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>theta_list <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"list"</span>, h)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>mag_list[[i]] <span class="ot">&lt;-</span> mag_row</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>theta_list[[i]] <span class="ot">&lt;-</span> theta_row</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert to vectors + save to df</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>mag_vec <span class="ot">&lt;-</span> <span class="fu">unlist</span>(mag_list)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>theta_vec <span class="ot">&lt;-</span> <span class="fu">unlist</span>(theta_list)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>radian_vec <span class="ot">&lt;-</span> theta_vec <span class="sc">*</span> pi <span class="sc">/</span> <span class="dv">180</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>dataset_df <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="at">theta =</span> theta_vec,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="at">mag =</span> mag_vec,</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="at">radian =</span> radian_vec</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>To observe how this gradient analysis visualizes the dominant direction of grass in an image, <a href="#fig-gradientplots" class="quarto-xref">Figure&nbsp;2</a> shows a side-by-side comparison of a raw grass image from the St.&nbsp;Lawrence University Living Laboratory and its corresponding polar plot. The polar plot is generated by reading the per-pixel angle and magnitudes dataset saved for that image and plotting the theta column as a circular histogram using <code>ggplot2</code>’s coord_polar(). Each bar represents the count of pixels whose gradient angles fall within that direction, with compass directions labeled around the outside. The direction of the tallest bar represents the most frequently occurring gradient angle, giving a visual impression of the dominant grass lay direction detected by the algorithm.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"../output/angles_mags/DJI_0362.csv"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(df, <span class="fu">aes</span>(<span class="at">x =</span> theta)) <span class="sc">+</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"black"</span>, </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="st">"darkgreen"</span>, </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">360</span>, <span class="at">length.out =</span> <span class="fl">17.5</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_polar</span>(<span class="at">theta =</span> <span class="st">"x"</span>, <span class="at">start =</span> <span class="dv">0</span>, <span class="at">direction =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">360</span>),</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">breaks =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">45</span>, <span class="dv">90</span>, <span class="dv">135</span>, <span class="dv">180</span>, <span class="dv">225</span>, <span class="dv">270</span>, <span class="dv">315</span>),</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"N"</span>, <span class="st">"NE"</span>, <span class="st">"E"</span>, <span class="st">"SE"</span>, <span class="st">"S"</span>, <span class="st">"SW"</span>, <span class="st">"W"</span>, <span class="st">"NW"</span>)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="fig-gradientplots" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-gradientplots-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-gradientplots" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-rawgrass" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-rawgrass-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="rot0/DJI_0362.JPG" class="img-fluid figure-img" style="width:70.0%" data-ref-parent="fig-gradientplots">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-rawgrass-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(a) Raw Grass Image
+</figcaption>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell-subref quarto-layout-cell" data-ref-parent="fig-gradientplots" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div id="fig-polarplot" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-subfloat-fig figure">
+<div aria-describedby="fig-polarplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="media/image_0362.png" class="img-fluid figure-img" style="width:95.0%" data-ref-parent="fig-gradientplots">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-polarplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+(b) Gradient Polar Plot
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-gradientplots-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Gradient Analysis Polar Plot Visualization.
+</figcaption>
+</figure>
+</div>
+<p>To summarize the pixel-level gradient angles extracted from each image, weighted circular statistics are computed using the <code>tectonicr</code> package in R. Because grass orientation is directional data that wraps around, standard linear statistics such as a regular mean or variance are not appropriate. Circular statistics are instead used, which account for the nature of angular data. The gradient magnitude at each pixel serves as a weight, meaning pixels with stronger intensity changes indicating more defined grass edges contribute more to the overall directional estimate than pixels in flat regions.</p>
+<p>For each of the 65 images, four weighted circular statistics are computed. The circular mean is the average dominant direction of gradient angles across all pixels, weighted by magnitude, and represents the algorithm’s estimate of the overall grass lay direction in the image. The circular variance measures how spread out the angles are around this mean, where a value close to 0 indicates most pixels agree on a similar direction and a value close to 1 indicates that the directions of grass in the image are more varied. The circular median is the central angle value that divides the weighted distribution in half. The circular IQR measures the spread of the middle 50% of the weighted angle distribution, capturing variability in the dominant direction without being influenced by extreme values.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compute weighted circular statistics</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  mean_val <span class="ot">&lt;-</span> <span class="fu">circular_mean</span>(angles, <span class="at">w =</span> magnitudes, <span class="at">axial =</span> <span class="cn">TRUE</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  var_val <span class="ot">&lt;-</span> <span class="fu">circular_var</span>(angles, <span class="at">w =</span> magnitudes, <span class="at">axial =</span> <span class="cn">TRUE</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  median_val <span class="ot">&lt;-</span> <span class="fu">circular_median</span>(angles, <span class="at">w =</span> magnitudes, <span class="at">axial =</span> <span class="cn">TRUE</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  iqr_val <span class="ot">&lt;-</span> <span class="fu">circular_IQR</span>(angles, <span class="at">w =</span> magnitudes, <span class="at">axial =</span> <span class="cn">TRUE</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  quantiles <span class="ot">&lt;-</span> <span class="fu">circular_quantiles</span>(angles, <span class="at">w =</span> magnitudes, <span class="at">axial =</span> <span class="cn">TRUE</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The <code>axial = TRUE</code> argument is used throughout because as discussed earlier, the grass orientation is axial, meaning pixel-level angles map onto a 0°–180° range rather than a full 360° scale, since a grass blade pointing at 10° is indistinguishable from one pointing at 190°. The circular statistics therefore operate on the same 0°–180° scale as the extracted angles, ensuring consistency between the pixel-level gradient computation and the image-level summary statistics. These statistics are compiled into a data frame with one row per image, containing the image name, date taken, and the four circular statistics, producing a full dataset for further analysis. <strong>Table 2</strong> shows a sample of this dataset.</p>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Sample of Weighted Circular Statistics for Gradient Analysis</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Image</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Circ. Mean</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Circ. Variance</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Circ. Median</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Circ. IQR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 3.5cm;">DJI_0256</td>
+<td style="text-align: right; width: 2cm;">29.86624</td>
+<td style="text-align: right; width: 2.5cm;">0.9433418</td>
+<td style="text-align: right; width: 2.5cm;">86.04090</td>
+<td style="text-align: right; width: 2cm;">87.48395</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 3.5cm;">DJI_0344</td>
+<td style="text-align: right; width: 2cm;">55.83333</td>
+<td style="text-align: right; width: 2.5cm;">0.9337435</td>
+<td style="text-align: right; width: 2.5cm;">86.11589</td>
+<td style="text-align: right; width: 2cm;">87.35129</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 3.5cm;">DJI_0345</td>
+<td style="text-align: right; width: 2cm;">44.43737</td>
+<td style="text-align: right; width: 2.5cm;">0.9225823</td>
+<td style="text-align: right; width: 2.5cm;">84.41378</td>
+<td style="text-align: right; width: 2cm;">89.36600</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 3.5cm;">DJI_0346</td>
+<td style="text-align: right; width: 2cm;">47.72566</td>
+<td style="text-align: right; width: 2.5cm;">0.9125125</td>
+<td style="text-align: right; width: 2.5cm;">82.86430</td>
+<td style="text-align: right; width: 2cm;">89.01660</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 3.5cm;">DJI_0347</td>
+<td style="text-align: right; width: 2cm;">65.90795</td>
+<td style="text-align: right; width: 2.5cm;">0.9411583</td>
+<td style="text-align: right; width: 2.5cm;">86.89895</td>
+<td style="text-align: right; width: 2cm;">86.13982</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 3.5cm;">DJI_0348</td>
+<td style="text-align: right; width: 2cm;">51.95467</td>
+<td style="text-align: right; width: 2.5cm;">0.9250089</td>
+<td style="text-align: right; width: 2.5cm;">84.87817</td>
+<td style="text-align: right; width: 2cm;">87.91640</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 3.5cm;">DJI_0349</td>
+<td style="text-align: right; width: 2cm;">46.13757</td>
+<td style="text-align: right; width: 2.5cm;">0.8978368</td>
+<td style="text-align: right; width: 2.5cm;">82.29246</td>
+<td style="text-align: right; width: 2cm;">88.02058</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 3.5cm;">DJI_0350</td>
+<td style="text-align: right; width: 2cm;">58.83998</td>
+<td style="text-align: right; width: 2.5cm;">0.9009255</td>
+<td style="text-align: right; width: 2.5cm;">83.29214</td>
+<td style="text-align: right; width: 2cm;">85.42393</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>To validate the gradient analysis results, human assessments of the same 65 SLU Living Lab images were collected using a custom R Shiny web application, described in the following section.</p>
+</section>
+<section id="human-assessment-of-grass-lay-using-r-shiny-web-app" class="level3" data-number="1.2">
+<h3 data-number="1.2" class="anchored" data-anchor-id="human-assessment-of-grass-lay-using-r-shiny-web-app"><span class="header-section-number">1.2</span> Human Assessment of Grass Lay Using R Shiny Web App</h3>
+<p>As discussed in the Introduction, the Traditional Ecological Knowledge (TEK) of physically observing grass lay is a method used by Arctic community members. Hunters and gatherers will observe the direction plants lay down after the growing season as proxies for predominant wind direction and wind direction change. To replicate this observational process, we customized an app to retrieve volunteers’ perceptions of direction that grass lays. Shiny is an R package that makes it easy to build interactive web applications straight from R (<span class="citation" data-cites="defineshiny">Posit (<a href="#ref-defineshiny" role="doc-biblioref">2026</a>)</span>). We used Shiny to customize an interactive grass app to collect human assessments of the grass images’ dominant grass lay direction. 45 volunteers completed the assessment of all 65 grass images. Each participant session is assigned a unique <code>UUID</code> to ensure anonymity while preserving response traceability. The application presents users with the series of grass images and prompts them to indicate the dominant direction of grass lay by clicking directly on the image. Upon clicking, a visual arrow is displayed to reflect the selected direction, allowing users to adjust their response before submission. See <a href="#fig-grassapp" class="quarto-xref">Figure&nbsp;3</a>.</p>
+<div id="fig-grassapp" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-grassapp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="media/grassapp.png" class="img-fluid figure-img" style="width:100.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-grassapp-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: <a href="https://franmnenula.shinyapps.io/grassapp_v1/">Custom Shiny Grass App</a>
+</figcaption>
+</figure>
+</div>
+<p>The 65 grass images are stored in a GitHub repository and retrieved at the start of each session using the GitHub API. The API call constructs a URL pointing to the images folder of the repository and uses <code>jsonlite::fromJSON()</code> to parse the response, extracting all filenames with image extensions into a master list called <code>img_master_global</code>. This approach avoids hardcoding file paths and ensures the full image set is always current without needing to update the app code when images change.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Github variables</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>repo_owner <span class="ot">&lt;-</span> <span class="st">"franriee"</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>repo_name <span class="ot">&lt;-</span> <span class="st">"SYE_Grass_Study"</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Use regular images folder to get the master list of filenames</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>folder_api <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"https://api.github.com/repos/"</span>, </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>repo_owner, <span class="st">"/"</span>, repo_name, <span class="st">"/contents/images"</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>files <span class="ot">&lt;-</span> jsonlite<span class="sc">::</span><span class="fu">fromJSON</span>(folder_api)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a data frame to keep the image names </span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>img_master_global <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">name =</span> files<span class="sc">$</span>name[<span class="fu">grepl</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">.(png|jpg|jpeg)$"</span>, files<span class="sc">$</span>name, </span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">ignore.case =</span> <span class="cn">TRUE</span>)], </span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>When a new participant session begins, the Shiny server creates a session-specific shuffled copy of <code>img_master_global</code> by randomly reordering the rows using <code>sample()</code>. This means every participant sees the same 65 images but in a different order, reducing ordering effects where earlier images might systematically influence responses to later ones. To further reduce bias, a random rotation is pre-assigned to every image for that session by sampling from 0°, 90°, 180°, and 270°. This is important because the region the St.&nbsp;Lawrence University Living Laboratory is located experiences predominant northeasterly winds, and volunteers familiar with the site may already know this. Without rotation, a participant who recognizes the field’s geographic orientation could use that prior knowledge to guess that grass lays in the direction of the prevailing northeast wind rather than genuinely assessing the direction they perceive from the image itself. By randomly rotating each image before display, no fixed compass orientation is preserved, ensuring that responses reflect the participant’s actual visual perception of grass lay direction rather than recalled knowledge of local wind patterns.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>server <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output, session) {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  img_master <span class="ot">&lt;-</span> img_master_global[<span class="fu">sample</span>(<span class="fu">nrow</span>(img_master_global)), </span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  , drop <span class="ot">=</span> <span class="cn">FALSE</span>]</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  session_rotations <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">90</span>, <span class="dv">180</span>, <span class="dv">270</span>), </span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">nrow</span>(img_master), <span class="at">replace =</span> <span class="cn">TRUE</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Each image is displayed using a Plotly-based interface. <code>Plotly</code> is an interactive graphing library in R that supports event-driven interactions such as mouse clicks, making it well suited for collecting user input directly on top of an image (<span class="citation" data-cites="defineplotly">Plotly Technologies Inc. (<a href="#ref-defineplotly" role="doc-biblioref">2026</a>)</span>). The image is overlaid onto a coordinate grid ranging from 0 to 1 in both the x and y dimensions, rendered as a background layer beneath an invisible heatmap. This design allows click positions to be precisely recorded without needing to re-render the grass image each time the participant adjusts their arrow.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_ly</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>      <span class="at">x =</span> g, <span class="at">y =</span> g, <span class="at">z =</span> z,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>      <span class="at">type =</span> <span class="st">"heatmap"</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">showscale =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">hoverinfo =</span> <span class="st">"none"</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>      <span class="at">source =</span> <span class="st">"grass_plot"</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>      <span class="at">colorscale =</span> <span class="fu">list</span>(<span class="fu">list</span>(<span class="dv">0</span>, <span class="st">"rgba(0,0,0,0)"</span>), </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>      <span class="fu">list</span>(<span class="dv">1</span>, <span class="st">"rgba(0,0,0,0)"</span>))</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">layout</span>(</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        <span class="at">xaxis =</span> <span class="fu">list</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">visible =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">fixedrange =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">yaxis =</span> <span class="fu">list</span>(<span class="at">range =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">1</span>), <span class="at">visible =</span> <span class="cn">FALSE</span>, </span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">fixedrange =</span> <span class="cn">TRUE</span>, <span class="at">scaleanchor =</span> <span class="st">"x"</span>),</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">images =</span> <span class="fu">list</span>(<span class="fu">list</span>(</span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>          <span class="at">source =</span> github_raw_url,</span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>          <span class="at">x =</span> <span class="dv">0</span>, <span class="at">y =</span> <span class="dv">1</span>, <span class="at">sizex =</span> <span class="dv">1</span>, <span class="at">sizey =</span> <span class="dv">1</span>,</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>          <span class="at">xref =</span> <span class="st">"x"</span>, <span class="at">yref =</span> <span class="st">"y"</span>, <span class="at">sizing =</span> <span class="st">"contain"</span>, </span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>          <span class="at">layer =</span> <span class="st">"below"</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>        )),</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">margin =</span> <span class="fu">list</span>(<span class="at">l=</span><span class="dv">0</span>, <span class="at">r=</span><span class="dv">0</span>, <span class="at">t=</span><span class="dv">0</span>, <span class="at">b=</span><span class="dv">0</span>),</span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">annotations =</span> <span class="fu">list</span>() <span class="co"># Clear old arrows on re-render</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">%&gt;%</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>      <span class="fu">config</span>(<span class="at">displayModeBar =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>  <span class="er">})</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>When a participant clicks on the image, Plotly captures the click coordinates <code>d$x</code> and <code>d$y</code>. The angular direction of the click is then computed relative to the center of the image at <code>(0.5, 0.5)</code>. The horizontal and vertical distances from the center, <code>dx</code> and <code>dy</code>, are passed to <code>atan2()</code> which computes the angle in radians and converts it to degrees. The result is mapped onto a 0°–360° circular scale using the modulo operator <code>%% 360</code>. A visual arrow is then rendered from the image center to the click position using <code>plotlyProxyInvoke()</code>, which updates only the annotation layer of the plot without re-rendering the background image, allowing the participant to adjust their response smoothly before submitting.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Listen for plotly click</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">observeEvent</span>(<span class="fu">event_data</span>(<span class="st">"plotly_click"</span>, <span class="at">source =</span> <span class="st">"grass_plot"</span>), </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  { </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    d <span class="ot">&lt;-</span> <span class="fu">event_data</span>(<span class="st">"plotly_click"</span>, <span class="at">source =</span> <span class="st">"grass_plot"</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">req</span>(d) <span class="co"># require that the click is not null</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update the last saved clicks</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">last_click_x</span>(d<span class="sc">$</span>x)</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">last_click_y</span>(d<span class="sc">$</span>y)</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Angle calculation from center (0.5, 0.5)</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    dx <span class="ot">&lt;-</span> d<span class="sc">$</span>x <span class="sc">-</span> <span class="fl">0.5</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    dy <span class="ot">&lt;-</span> d<span class="sc">$</span>y <span class="sc">-</span> <span class="fl">0.5</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert x,y to degrees (using atan2)</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    res_angle <span class="ot">&lt;-</span> (<span class="fu">atan2</span>(dx, dy) <span class="sc">*</span> <span class="dv">180</span> <span class="sc">/</span> pi) <span class="sc">%%</span> <span class="dv">360</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">current_angle</span>(res_angle)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update arrow</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># plotlyProxy to modify only the annotation layer of the plot</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># relayout updates the arrow position instantly without </span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># re-rendering the background grass image</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plotlyProxy</span>(<span class="st">"img_display"</span>, session) <span class="sc">%&gt;%</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>      <span class="fu">plotlyProxyInvoke</span>(<span class="st">"relayout"</span>, <span class="fu">list</span>(</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">annotations =</span> <span class="fu">list</span>(<span class="fu">list</span>(</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>          <span class="at">x =</span> d<span class="sc">$</span>x, <span class="at">y =</span> d<span class="sc">$</span>y,</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>          <span class="at">ax =</span> <span class="fl">0.5</span>, <span class="at">ay =</span> <span class="fl">0.5</span>,</span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>          <span class="at">xref =</span> <span class="st">"x"</span>, <span class="at">yref =</span> <span class="st">"y"</span>,</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>          <span class="at">axref =</span> <span class="st">"x"</span>, <span class="at">ayref =</span> <span class="st">"y"</span>,</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>          <span class="at">text =</span> <span class="st">""</span>, </span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>          <span class="at">showarrow =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>          <span class="at">arrowwidth =</span> <span class="dv">5</span>,</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>          <span class="at">arrowhead =</span> <span class="dv">3</span>,</span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>          <span class="at">arrowcolor =</span> <span class="st">"#4B0082"</span></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>        ))</span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>      ))</span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>In addition to the angular direction, the Euclidean distance from the image center to the click position is recorded as a magnitude value, computed from <code>dx</code> and <code>dy</code> using the Pythagorean formula. This distance serves as a proxy for response confidence where a click far from the center suggests a more deliberate directional choice, while a click at or very close to the center may indicate uncertainty in their choice of dominant grass lay. Because the arrow defaults to the center position <code>(0.5, 0.5)</code> before any click is made, a magnitude of 0 means the participant submitted without clicking, leaving the angle unchanged from its default value. We assume that these submissions do not represent a genuine assessment of grass direction and would introduce noise into the circular statistics. To address this, responses with a magnitude of exactly 0 were filtered out before computing the per-image circular statistics, retaining only submissions where the participant made a deliberate click away from the center.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a> <span class="co"># Get the click</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    cx <span class="ot">&lt;-</span> <span class="fu">last_click_x</span>()</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    cy <span class="ot">&lt;-</span> <span class="fu">last_click_y</span>()</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    dx <span class="ot">&lt;-</span> cx <span class="sc">-</span> <span class="fl">0.5</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    dy <span class="ot">&lt;-</span> cy <span class="sc">-</span> <span class="fl">0.5</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    mag <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(dx<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> dy<span class="sc">^</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>All responses are stored in real time using the Google Sheets API via the <code>googlesheets4</code> package, enabling immediate cloud-based logging into a Google Sheet without local storage dependencies. After each submission, a row is appended to the connected Google Sheet containing the participant’s unique session ID, the image name, the displayed rotation, the raw submitted angle, the true angle corrected for rotation by reversing the applied rotation <code>(current_angle() - rotation() %% 360)</code>, the click coordinates, the magnitude, and a timestamp. This structure ensures full reproducibility and traceability of all responses.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Google sheets connection</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">gs4_auth</span>(<span class="at">path =</span> <span class="st">"xxxxxxx.json"</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>sheet_url <span class="ot">&lt;-</span> <span class="st">"https://xxxxxxxxxxx"</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>codes_sheet_url <span class="ot">&lt;-</span> <span class="st">"https://xxxxxxxx"</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Add to Google Sheet</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Upon submission, create the row of data by creating a df</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Retrieve the name of the image the user is seeing</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Add the new data to the Google Sheet (sheet)</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sheet_append</span>(sheet_url, <span class="fu">data.frame</span>(</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>      <span class="at">UserID =</span> user_session_id,</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>      <span class="at">Image =</span> img_master<span class="sc">$</span>name[<span class="fu">idx</span>()], </span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>      <span class="at">User_Angle =</span> <span class="fu">round</span>(<span class="fu">current_angle</span>(), <span class="dv">2</span>),</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">True_Angle =</span> <span class="fu">round</span>((<span class="fu">current_angle</span>() <span class="sc">-</span> <span class="fu">rotation</span>()) <span class="sc">%%</span> <span class="dv">360</span>, </span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>      <span class="dv">2</span>), <span class="co"># reverse the rotation and that is the true angle</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">Rotation =</span> <span class="fu">rotation</span>(),</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">Timestamp =</span> <span class="fu">format</span>(<span class="fu">Sys.time</span>(), <span class="at">tz =</span> <span class="st">"America/New_York"</span>),</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">Coord_x =</span> <span class="fu">round</span>(cx, <span class="dv">4</span>),</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>      <span class="at">Coord_y =</span> <span class="fu">round</span>(cy, <span class="dv">4</span>),</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>      <span class="at">Magnitude =</span> <span class="fu">round</span>(mag, <span class="dv">2</span>)</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    ), <span class="at">sheet =</span> <span class="st">"Results"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Just as with the gradient analysis, the submitted human responses are summarized using circular statistics computed per image across all 45 participants. Before computing the statistics, responses with a magnitude of 0 are filtered out as described earlier, retaining only deliberate submissions. The <code>True_Angle</code> column which represents each participant’s submitted angle corrected for the random rotation applied to that image is used as the input, ensuring that all responses are on the same scale regardless of which rotation the participant saw. For each of the 65 images, the circular mean, circular variance, circular median, and circular IQR are computed across all valid participant responses again using <code>axial = TRUE</code> in order to ensure that both the gradient analysis and human assessment circular statistics are summarized on the same axial scale. This produces a data frame of one row per image containing the human assessment circular statistics as seen in <strong>Table 3</strong>.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a df that summarises the circular stats </span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>humangrassanalysis_df <span class="ot">&lt;-</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  grass_csv <span class="sc">%&gt;%</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Magnitude <span class="sc">!=</span> <span class="dv">0</span>) <span class="sc">%&gt;%</span> <span class="co"># filter </span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Image) <span class="sc">%&gt;%</span> <span class="co"># to get the average results across everyone who did it</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">circular_mean =</span> <span class="fu">circular_mean</span>(True_Angle, <span class="at">axial =</span> <span class="cn">TRUE</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">circular_var =</span> <span class="fu">circular_var</span>(True_Angle, <span class="at">axial =</span> <span class="cn">TRUE</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">circular_median =</span> <span class="fu">circular_median</span>(True_Angle, <span class="at">axial =</span> <span class="cn">TRUE</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">circular_IQR =</span> <span class="fu">circular_IQR</span>(True_Angle, <span class="at">axial =</span> <span class="cn">TRUE</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  </span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table caption-top table-sm table-striped small">
+<caption>Sample of Circular Statistics for Human Assessment</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;" data-quarto-table-cell-role="th">Image</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Circ. Mean</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Circ. Variance</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Circ. Median</th>
+<th style="text-align: right;" data-quarto-table-cell-role="th">Circ. IQR</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left; width: 3.5cm;">DJI_0256.JPG</td>
+<td style="text-align: right; width: 2cm;">68.5793556</td>
+<td style="text-align: right; width: 2.5cm;">0.3103773</td>
+<td style="text-align: right; width: 2.5cm;">63.335</td>
+<td style="text-align: right; width: 2cm;">38.25000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 3.5cm;">DJI_0344.JPG</td>
+<td style="text-align: right; width: 2cm;">15.9127585</td>
+<td style="text-align: right; width: 2.5cm;">0.2677430</td>
+<td style="text-align: right; width: 2.5cm;">27.900</td>
+<td style="text-align: right; width: 2cm;">45.71073</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 3.5cm;">DJI_0345.JPG</td>
+<td style="text-align: right; width: 2cm;">49.7385234</td>
+<td style="text-align: right; width: 2.5cm;">0.1350962</td>
+<td style="text-align: right; width: 2.5cm;">49.200</td>
+<td style="text-align: right; width: 2cm;">18.88000</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 3.5cm;">DJI_0346.JPG</td>
+<td style="text-align: right; width: 2cm;">45.4537004</td>
+<td style="text-align: right; width: 2.5cm;">0.2943070</td>
+<td style="text-align: right; width: 2.5cm;">48.300</td>
+<td style="text-align: right; width: 2cm;">17.25647</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 3.5cm;">DJI_0347.JPG</td>
+<td style="text-align: right; width: 2cm;">0.0472472</td>
+<td style="text-align: right; width: 2.5cm;">0.2451050</td>
+<td style="text-align: right; width: 2.5cm;">125.860</td>
+<td style="text-align: right; width: 2cm;">12.53982</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 3.5cm;">DJI_0348.JPG</td>
+<td style="text-align: right; width: 2cm;">31.8676547</td>
+<td style="text-align: right; width: 2.5cm;">0.1962487</td>
+<td style="text-align: right; width: 2.5cm;">35.960</td>
+<td style="text-align: right; width: 2cm;">17.74258</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left; width: 3.5cm;">DJI_0349.JPG</td>
+<td style="text-align: right; width: 2cm;">39.1305206</td>
+<td style="text-align: right; width: 2.5cm;">0.1785787</td>
+<td style="text-align: right; width: 2.5cm;">40.910</td>
+<td style="text-align: right; width: 2cm;">12.90371</td>
+</tr>
+<tr class="even">
+<td style="text-align: left; width: 3.5cm;">DJI_0350.JPG</td>
+<td style="text-align: right; width: 2cm;">25.1512659</td>
+<td style="text-align: right; width: 2.5cm;">0.2352956</td>
+<td style="text-align: right; width: 2.5cm;">33.075</td>
+<td style="text-align: right; width: 2cm;">16.50000</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>The findings from both the gradient analysis techniques and the human assessment of images were compared to evaluate the validity of results obtained from the gradient analysis techniques. The next section will highlight the results as well as assess this data’s association with wind data during the growing season the previous year.</p>
+
+
+
+</section>
+</section>
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
+<div id="ref-manavalan2020" class="csl-entry" role="listitem">
+Manavalan, R. 2020. <span>“Automatic Identification of Diseases in Grains Crops Through Computational Approaches: A Review.”</span> <em>Science Direct</em> 178: 8–10.
+</div>
+<div id="ref-defineplotly" class="csl-entry" role="listitem">
+Plotly Technologies Inc. 2026. <span>“Plotly r Graphing Library.”</span> <a href="https://plotly.com/r/">https://plotly.com/r/</a>.
+</div>
+<div id="ref-defineshiny" class="csl-entry" role="listitem">
+Posit. 2026. <span>“Welcome to Shiny.”</span> <a href="https://shiny.posit.co/r/getstarted/shiny-basics/lesson1/">https://shiny.posit.co/r/getstarted/shiny-basics/lesson1/</a>.
+</div>
+<div id="ref-sunshine2024" class="csl-entry" role="listitem">
+Sunshine, Ben. 2024. <span>“Applying the Histogram of Oriented Gradients Algorithm for Detecting Grass Lay Direction.”</span> Unpublished manuscript.
+</div>
+</div></section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

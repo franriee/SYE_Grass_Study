@@ -13,11 +13,12 @@ This qmd file will analyse weather data retrieved from the St. Lawrence Living L
 library(readr)
 library(tidyverse)
 library(tectonicr)
+library(here)
 ```
 
 ```{r, message=FALSE, warning=FALSE}
 # Read in csv files
-file <- "../winddata/winddata.csv"
+file <- here("winddata/winddata.csv")
 wind_csv <- read_csv(file)
 ```
 
@@ -49,7 +50,7 @@ wind_csv
 # Save this frequently taken data 
 
 # Directory for where to save the file
-file_name <- paste0("../output/wind_summaries/frequentwinddata.csv")
+file_name <- here("output/wind_summaries/frequentwinddata.csv")
 
 # Save the dataset to a file in the wind_summaries folder
 write_csv(wind_csv, file_name)
@@ -108,7 +109,7 @@ merged_wind_df
 
 ```{r}
 # Directory for where to save the file
-file_name <- paste0("../output/wind_summaries/winddataanalysis.csv")
+file_name <- here("output/wind_summaries/winddataanalysis.csv")
 
 # Save the dataset to a file in the wind_summaries folder
 write_csv(merged_wind_df, file_name)
