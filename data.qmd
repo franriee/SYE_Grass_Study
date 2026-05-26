@@ -16,7 +16,7 @@ Sample SLU Living Lab Drone Grass Images. Source: Dr. Jon Rosales.
 
 :::
 
-The SLU Living Lab also collects various weather data. The lab has an installation of weather equipment that as seen in @fig-equipment, retrieves data from a wind vane, anemometer, and solar panel. This collects information about wind direction, speed, and other atmospheric characteristics. This data is logged every 15 minutes. **Table 1** is a table showing a snippet of the wind data collected. The wind data shown here covers the period from April 2022 through September 2022, which corresponds to the growing season prior to the April 2023 image collection. This alignment is linked with the grasses growing season and is discussed further in the Results section.
+The SLU Living Lab also collects various weather data. The lab has an installation of weather equipment that as seen in @fig-equipment, retrieves data from a wind vane, anemometer, and solar panel. This collects information about wind direction, speed, and other atmospheric characteristics. This data is logged every 15 minutes. @tbl-winddata is a table showing a snippet of the wind data collected. The wind data shown here covers the period from April 2022 through September 2022, which corresponds to the growing season prior to the April 2023 image collection. This alignment is linked with the grasses growing season and is discussed further in the Results section.
 
 ::: {#fig-equipment layout-ncol=2}
 ![](weatherequip.jpg){#fig-equip1 width=60%}

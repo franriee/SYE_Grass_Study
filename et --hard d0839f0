@@ -1,0 +1,41 @@
+[33mf1ead93[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m update html
+[33m48d2ba5[m update html
+[33md0839f0[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m render html to github
+[33m1fdaca8[m PDF Paper final update
+[33m3b4f8b9[m PDF Paper final update
+[33m80c890d[m PDF Paper final update
+[33me18708d[m PDF Paper update
+[33ma096bd5[m Update site
+[33m3b2cf36[m HTML Paper update
+[33mf34011c[m Paper update
+[33mec35ea1[m Paper update
+[33m9caad9d[m Paper update
+[33m885a355[m Paper update
+[33m1bb5268[m Rename results/syepaper.html to index.html
+[33m74a831a[m Paper update
+[33m5dedfd7[m Data analysis
+[33mb040794[m SYE Documents updates
+[33mf8b4bb2[m Latest app changes
+[33m48a66a9[m Fixed true angle formula
+[33mb42d610[m grass app that rotates images
+[33m5cab920[m grass app that rotates images
+[33ma5254ad[m updates to rotating images
+[33mf9da5e5[m updated dates in grass_df
+[33m669012c[m updated dates in grass_df
+[33m4e15bc7[m Enhance README with project details and folder structure
+[33m44cba2d[m updates after cropped images
+[33m4b8c72d[m cropped images
+[33m439134d[m added columns to retrieve coordinates and magintudes
+[33mcfa37be[m adding version 1 to github
+[33mb754604[m updated app with plotly
+[33ma1508c2[m Updates app2.R with cleaner UI and working randomisations of images
+[33m1c9bd18[m updated app versions
+[33m614023b[m pushing click-input version of grass app
+[33m71ef743[m Update README.md
+[33mdd88d98[m added project overview
+[33m426424c[m created a new df named grass_df.csv with new date column using exif data
+[33maacfb96[m Implemented changes with 67 total images
+[33m605e757[m Overwrite GitHub with local OneDrive version
+[33m3f569fd[m Initial commit of grass HOG project
+[33m4c9a0f4[m Create .gitignore
+[33m9355ee1[m Add project title to README

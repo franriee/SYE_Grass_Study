@@ -153,9 +153,9 @@ For each of the 65 images, four weighted circular statistics are computed. The c
   quantiles <- circular_quantiles(angles, w = magnitudes, axial = TRUE, na.rm = TRUE)
   
 ```
-The `axial = TRUE` argument is used throughout because as discussed earlier, the grass orientation is axial, meaning pixel-level angles map onto a 0°–180° range rather than a full 360° scale, since a grass blade pointing at 10° is indistinguishable from one pointing at 190°. The circular statistics therefore operate on the same 0°–180° scale as the extracted angles, ensuring consistency between the pixel-level gradient computation and the image-level summary statistics. These statistics are compiled into a data frame with one row per image, containing the image name, date taken, and the four circular statistics, producing a full dataset for further analysis. **Table 2** shows a sample of this dataset.
+The `axial = TRUE` argument is used throughout because as discussed earlier, the grass orientation is axial, meaning pixel-level angles map onto a 0°–180° range rather than a full 360° scale, since a grass blade pointing at 10° is indistinguishable from one pointing at 190°. The circular statistics therefore operate on the same 0°–180° scale as the extracted angles, ensuring consistency between the pixel-level gradient computation and the image-level summary statistics. These statistics are compiled into a data frame with one row per image, containing the image name, date taken, and the four circular statistics, producing a full dataset for further analysis. @tbl-gradientstats shows a sample of this dataset.
 
-```{r echo=FALSE, warning=FALSE, message=FALSE}
+```{r tbl-gradientstats, echo=FALSE, warning=FALSE, message=FALSE}
 library(knitr)
 library(kableExtra)
 library(readr)
@@ -169,8 +169,7 @@ grad_display <- grad_stats %>%
   head(8)
 
 kbl(grad_display,
-    booktabs = T,
-    label="tbl-gradientstats",
+    booktabs = TRUE,
     caption = "Sample of Weighted Circular Statistics for Gradient Analysis",
     col.names = c("Image", "Circ. Mean", "Circ. Variance", "Circ. Median", "Circ. IQR")) %>%
   kable_styling(latex_options = c("striped", "hold_position"),
@@ -332,7 +331,7 @@ codes_sheet_url <- "https://xxxxxxxx"
     ), sheet = "Results")
 ```
 
-Just as with the gradient analysis, the submitted human responses are summarized using circular statistics computed per image across all 45 participants. Before computing the statistics, responses with a magnitude of 0 are filtered out as described earlier, retaining only deliberate submissions. The `True_Angle` column which represents each participant's submitted angle corrected for the random rotation applied to that image is used as the input, ensuring that all responses are on the same scale regardless of which rotation the participant saw. For each of the 65 images, the circular mean, circular variance, circular median, and circular IQR are computed across all valid participant responses again using `axial = TRUE` in order to ensure that both the gradient analysis and human assessment circular statistics are summarized on the same axial scale. This produces a data frame of one row per image containing the human assessment circular statistics as seen in **Table 3**.
+Just as with the gradient analysis, the submitted human responses are summarized using circular statistics computed per image across all 45 participants. Before computing the statistics, responses with a magnitude of 0 are filtered out as described earlier, retaining only deliberate submissions. The `True_Angle` column which represents each participant's submitted angle corrected for the random rotation applied to that image is used as the input, ensuring that all responses are on the same scale regardless of which rotation the participant saw. For each of the 65 images, the circular mean, circular variance, circular median, and circular IQR are computed across all valid participant responses again using `axial = TRUE` in order to ensure that both the gradient analysis and human assessment circular statistics are summarized on the same axial scale. This produces a data frame of one row per image containing the human assessment circular statistics as seen in @tbl-humanstats.
 
 ```r
 # Create a df that summarises the circular stats 
@@ -346,7 +345,7 @@ humangrassanalysis_df <-
             circular_IQR = circular_IQR(True_Angle, axial = TRUE, na.rm = TRUE))
   
 ```
-```{r echo=FALSE, warning=FALSE, message=FALSE}
+```{r tbl-humanstats, echo=FALSE, warning=FALSE, message=FALSE}
 hum_stats <- read_csv("output/wind_summaries/humangrassanalysis.csv")
 
 hum_display <- hum_stats %>% 
@@ -354,9 +353,8 @@ hum_display <- hum_stats %>%
   head(8)
 
 kbl(hum_display,
-    booktabs = T,
-    label="tbl-humanstats",
-    caption = "Sample of Circular Statistics for Human Assessment",
+    booktabs = TRUE,
+    caption ="Sample of Circular Statistics for Human Assessment",
     col.names = c("Image", "Circ. Mean", "Circ. Variance", "Circ. Median", "Circ. IQR")) %>%
   kable_styling(latex_options = c("striped", "hold_position"),
                 full_width = F) %>%

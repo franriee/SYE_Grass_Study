@@ -3,7 +3,7 @@ title: "Abstract"
 date: May 13, 2026
 author:
   - name: Francesca Mnenula
-    affiliation: St. Lawrence University, Class of 2026
+    affiliation: Data Science Honors, St. Lawrence University
     description: |
       Data Science Honors Project
       Supervised by Dr. Ivan Ramler

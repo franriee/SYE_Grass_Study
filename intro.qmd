@@ -4,7 +4,7 @@ title: "Introduction"
 
 Savoonga, Alaska shown in @fig-map is a Yupik community located on St. Lawrence Island (SLI) in the northern Bering Sea, west of mainland Alaska and south of the Bering Strait [@kawerak2024savoonga]. The region experiences harsh Arctic conditions, including strong seasonal winds, sea ice variability, and rapidly changing climate patterns that affect subsistence activities. Because daily life, settlement, travel, and hunting are closely connected to environmental conditions, local observations of wind changes are essential forms of knowledge in the region [@indigenous2013]. 
 
-![Location of Savoonga, Alaska on St. Lawrence Island in the Bering Sea @rosales2021.](map.jpg){#fig-map width=80%}
+![Location of Savoonga, Alaska on St. Lawrence Island in the Bering Sea [@rosales2021].](map.jpg){#fig-map width=80%}
 
 Traditional Ecological Knowledge (TEK) refers to the environmental knowledge and practices developed across generations through close relationships with the land and observation of environmental changes [@definetek]. In Arctic communities such as Savoonga, TEK plays an essential role in understanding local weather patterns and guiding hunting and subsistence activities. The Arctic region's extremely harsh environmental conditions make it difficult to install and reliably maintain conventional weather-monitoring equipment, such as wind sensors. As a result, long-term instrumental records of local wind patterns that could have been used to understand weather patterns or TEK recalibration are often limited or unavailable. The cultural significance of TEK also makes it essential to support its recalibration. TEK observations are qualitative and long-term, often made by persons who hunt, fish, and gather for subsistence. This makes TEK a part of a culture’s spiritual and social fabric, offering irreplaceable ecocultural knowledge that can be thousands of years old and incorporates long-standing values [@definetek].
 
@@ -18,12 +18,12 @@ It is for this project that tundra grasses were grown and studied at the St. Law
 
 ![](livinglab2.jpg){#fig-livinglab2 width=85%}
 
-Images of the SLU Living Lab @slulivinglab.
+Images of the SLU Living Lab [@slulivinglab].
 :::
 
 In the Savoonga region, residents employ the TEK practice of observing wind dynamics affecting tundra plants and in particular they examine bluejoint reedgrass (Calamagrostis canadensis) and tall cottongrass (Eriophorum angustifolium), in the sedge family, as indicators of predominant wind direction and wind direction change. Hunters and gatherers from Savoonga observe the direction these plants lay down after the growing season as proxies for predominant wind direction and wind direction change [@rosales2021]. Preliminary work on this project involved a manual process for estimating grass orientation from the SLU Living Lab field images. For instance, quadrat plots would be outlined on the ground using meter-by-meter PVC frames oriented to geographic north as shown in @fig-compass. Each quadrat was photographed, and grass lay direction was then manually determined by tracing the orientation of individual grass blades in the image.   
 
-![Manual process Of estimating grass orientation in grass images @rosales2021.](compass.jpg){#fig-compass width=80%}
+![Manual process Of estimating grass orientation in grass images [@rosales2021].](compass.jpg){#fig-compass width=80%}
 
 To support this manually strenuous process, we investigate how we can use image gradient analysis techniques on the images of tundra grass from the St. Lawrence University Living Laboratory to automate the process of measuring grass lay directions and determining their association with collected wind data. 
 

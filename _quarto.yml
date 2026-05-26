@@ -2,40 +2,34 @@ project:
   type: book
   execute-dir: project
   output-dir: docs
-
 book:
   title: "Estimating Grass Orientation from Drone Images to Determine Wind Patterns"
   author:
     - name: "Francesca Mnenula"
       affiliation: "St. Lawrence University '26"
   date: "2026-05-13"
+  search: false
   chapters:
     - index.qmd
     - intro.qmd
+    - data.qmd
     - methods.qmd
     - result.qmd
     - conclusion.qmd
     - references.qmd
-
 bibliography: references.bib
-
 format:
   html:
     theme:
       light: cosmo
       dark: darkly
-      
-    embed-resources: true
-
+    embed-resources: false
     toc: true
     toc-depth: 3
     number-sections: false
-
     code-fold: true
     code-tools: true
     code-line-numbers: true
-
     smooth-scroll: true
-    
     citation-style: https://www.zotero.org/styles/apa
     link-citations: true
