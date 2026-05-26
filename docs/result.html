@@ -408,7 +408,7 @@ div.csl-indent {
 <div id="fig-resultmin" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-resultmin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="media/minimages.png" class="img-fluid figure-img" style="width:80.0%" data-ref-parent="fig-results">
+<img src="media/minimages.png" class="img-fluid figure-img" style="width:200.0%" data-ref-parent="fig-results">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-resultmin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 (a) Low = 0.0084
@@ -420,10 +420,10 @@ div.csl-indent {
 <div id="fig-resultmax" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-resultmax-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="media/maximages.png" class="img-fluid figure-img" style="width:80.0%" data-ref-parent="fig-results">
+<img src="media/maximages.png" class="img-fluid figure-img" style="width:200.0%" data-ref-parent="fig-results">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-resultmax-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-(b) Medium = 0.55486
+(b) Medium = 0.5548
 </figcaption>
 </figure>
 </div>
@@ -432,7 +432,7 @@ div.csl-indent {
 <div id="fig-resultblurry" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-subfloat-fig figure">
 <div aria-describedby="fig-resultblurry-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="media/blurry_images.png" class="img-fluid figure-img" style="width:80.0%" data-ref-parent="fig-results">
+<img src="media/blurry_images.png" class="img-fluid figure-img" style="width:200.0%" data-ref-parent="fig-results">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-subfloat-caption quarto-subfloat-fig" id="fig-resultblurry-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 (c) High = 0.9999
@@ -460,7 +460,7 @@ Figure&nbsp;5.1: Images Showing Circular Distance.
 <div id="fig-monthplots" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-monthplots-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img src="media/monthplots.png" class="img-fluid figure-img" style="width:120.0%">
+<img src="media/monthplots.png" class="img-fluid figure-img" style="width:80.0%">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-monthplots-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;5.2: Wind Data and Dominant Grass Lay From Images.
@@ -981,35 +981,36 @@ Creative Computing Institute. (2024). <em>Intro to EXIF image metadata</em>. <a 
 <span id="cb2-24"><a href="#cb2-24"></a></span>
 <span id="cb2-25"><a href="#cb2-25"></a>The mean circular distance across all 65 images is 0.26 with a variance of 0.09, suggesting that on average the gradient analysis and human assessment are in moderate agreement. The minimum circular distance of 0.0006 indicates near-perfect agreement for at least one image, while the maximum of 0.999 indicates that for at least one image the two methods produced nearly perpendicular dominant direction estimates. There are a number of images where both methods closely align, but also a number where they diverge substantially. In @fig-results, the yellow arrow represents the dominant direction estimated by the gradient analysis and the black arrow represents the human assessment, illustrating examples of both low, medium, and high circular distance cases.</span>
 <span id="cb2-26"><a href="#cb2-26"></a></span>
-<span id="cb2-27"><a href="#cb2-27"></a>::: {#fig-results layout-ncol=3}</span>
-<span id="cb2-28"><a href="#cb2-28"></a></span>
-<span id="cb2-29"><a href="#cb2-29"></a><span class="al">![Low = 0.0084](media/minimages.png)</span>{#fig-resultmin width=80%}</span>
-<span id="cb2-30"><a href="#cb2-30"></a></span>
-<span id="cb2-31"><a href="#cb2-31"></a><span class="al">![Medium = 0.55486](media/maximages.png)</span>{#fig-resultmax width=80%}</span>
-<span id="cb2-32"><a href="#cb2-32"></a></span>
-<span id="cb2-33"><a href="#cb2-33"></a><span class="al">![High = 0.9999](media/blurry_images.png)</span>{#fig-resultblurry width=80%}</span>
-<span id="cb2-34"><a href="#cb2-34"></a></span>
-<span id="cb2-35"><a href="#cb2-35"></a>Images Showing Circular Distance.</span>
-<span id="cb2-36"><a href="#cb2-36"></a></span>
-<span id="cb2-37"><a href="#cb2-37"></a>:::</span>
-<span id="cb2-38"><a href="#cb2-38"></a></span>
-<span id="cb2-39"><a href="#cb2-39"></a>There are a number of reasons we assume the retrieved dominant angle differs significantly between the gradient analysis and the human assessment. </span>
-<span id="cb2-40"><a href="#cb2-40"></a></span>
-<span id="cb2-41"><a href="#cb2-41"></a>The first is that while the gradient analysis uses magnitude weighting in the circular statistics to give more influence to pixels with stronger intensity changes, this weighting is applied across all pixels in the image without first filtering out regions where no meaningful grass structure exists. Pixels in flat, texturally uniform regions such as bare soil, shadows, or background objects still produce gradient responses, and even with low magnitudes they collectively contribute to the overall dominant grass direction estimate. When many such low-magnitude pixels are spread across non-grass regions of the image, their cumulative effect can still shift the weighted circular mean away from the true grass lay direction. A human observer instinctively ignores these regions entirely, focusing attention only on areas where grass texture is clearly visible. The algorithm, by contrast, incorporates every pixel's contribution unless a magnitude threshold is explicitly applied beforehand to exclude low-confidence regions, making it more susceptible to being pulled by noise from non-grass areas of the image.</span>
-<span id="cb2-42"><a href="#cb2-42"></a></span>
-<span id="cb2-43"><a href="#cb2-43"></a>A second source of disagreement is the variety of aerial perspectives across the 65 images. Some images were captured from directly overhead, providing a clear top-down view of grass lay patterns, while others were taken at a lower angle closer to the grass surface, changing how gradient directions are expressed in the image. Image quality like in @fig-resultblurry produced blurry outlines and reduced texture clarity. In such cases the gradient analysis struggles to identify a coherent dominant direction, while human observers may still be able to use contextual cues to make a reasonable directional judgment.</span>
-<span id="cb2-44"><a href="#cb2-44"></a></span>
-<span id="cb2-45"><a href="#cb2-45"></a><span class="fu">### Comparing Dominant Grass Direction and Wind Data</span></span>
-<span id="cb2-46"><a href="#cb2-46"></a></span>
-<span id="cb2-47"><a href="#cb2-47"></a>At the SLU Living Lab, a wind station installed adjacent to the tundra vegetation records wind speed and direction at 15-minute intervals via a wind vane and anemometer. To align the wind data with the grass images, the 15-minute readings were aggregated to daily circular mean wind directions using circular statistics, accounting for the angular nature of wind direction data. This produces one representative wind direction per day that captures the overall prevailing direction across all readings that day.</span>
-<span id="cb2-48"><a href="#cb2-48"></a></span>
-<span id="cb2-49"><a href="#cb2-49"></a>To connect the grass images to the wind data, EXIF metadata that is the Exchangeable Image File Format information embedded in every digital image file was extracted from each drone image using the <span class="in">`exif`</span> package in R <span class="co">[</span><span class="ot">@cci2024</span><span class="co">]</span>. The <span class="in">`DateTimeOriginal`</span> field was retrieved, which records the exact date the image was captured by the drone, and cleaned into a standardized date variable. Since the grass images were taken in April 2023, wind data from April through September 2022 (the full growing season prior to image capture) was used for comparison. The rationale is that grass lay direction observed in April 2023 reflects the cumulative effect of winds experienced during the 2022 growing season when the grass was actively growing and being shaped by prevailing conditions.</span>
-<span id="cb2-50"><a href="#cb2-50"></a></span>
-<span id="cb2-51"><a href="#cb2-51"></a>Nine representative images with the smallest circular distances between gradient analysis and human assessment were selected, representing cases of strongest agreement between the two methods on dominant grass direction. The gradient analysis dominant direction for each of these nine images was overlaid as a colored vertical line on polar histograms of the monthly wind direction distributions from April through September 2022. </span>
-<span id="cb2-52"><a href="#cb2-52"></a>             </span>
-<span id="cb2-53"><a href="#cb2-53"></a>In @fig-monthplots, the grass lay directions from the nine selected images are represented as colored vertical lines overlaid on each month's wind direction polar histogram. The alignment between the lines and the dominant bars of the wind histogram indicates months where grass lay direction corresponds well with prevailing wind patterns. This alignment is most evident in the spring months of April and May, which represent the early growing season when grass is most actively responding to wind exposure. This correspondence supports the use of grass lay direction as a proxy for prevailing wind direction, particularly during the growing season.</span>
-<span id="cb2-54"><a href="#cb2-54"></a></span>
-<span id="cb2-55"><a href="#cb2-55"></a><span class="al">![Wind Data and Dominant Grass Lay From Images.](media/monthplots.png)</span>{#fig-monthplots width=120%}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
+<span id="cb2-27"><a href="#cb2-27"></a></span>
+<span id="cb2-28"><a href="#cb2-28"></a>::: {#fig-results layout-ncol=3}</span>
+<span id="cb2-29"><a href="#cb2-29"></a></span>
+<span id="cb2-30"><a href="#cb2-30"></a><span class="al">![Low = 0.0084](media/minimages.png)</span>{#fig-resultmin width=200%}</span>
+<span id="cb2-31"><a href="#cb2-31"></a></span>
+<span id="cb2-32"><a href="#cb2-32"></a><span class="al">![Medium = 0.5548](media/maximages.png)</span>{#fig-resultmax width=200%}</span>
+<span id="cb2-33"><a href="#cb2-33"></a></span>
+<span id="cb2-34"><a href="#cb2-34"></a><span class="al">![High = 0.9999](media/blurry_images.png)</span>{#fig-resultblurry width=200%}</span>
+<span id="cb2-35"><a href="#cb2-35"></a></span>
+<span id="cb2-36"><a href="#cb2-36"></a>Images Showing Circular Distance.</span>
+<span id="cb2-37"><a href="#cb2-37"></a></span>
+<span id="cb2-38"><a href="#cb2-38"></a>:::</span>
+<span id="cb2-39"><a href="#cb2-39"></a></span>
+<span id="cb2-40"><a href="#cb2-40"></a>There are a number of reasons we assume the retrieved dominant angle differs significantly between the gradient analysis and the human assessment. </span>
+<span id="cb2-41"><a href="#cb2-41"></a></span>
+<span id="cb2-42"><a href="#cb2-42"></a>The first is that while the gradient analysis uses magnitude weighting in the circular statistics to give more influence to pixels with stronger intensity changes, this weighting is applied across all pixels in the image without first filtering out regions where no meaningful grass structure exists. Pixels in flat, texturally uniform regions such as bare soil, shadows, or background objects still produce gradient responses, and even with low magnitudes they collectively contribute to the overall dominant grass direction estimate. When many such low-magnitude pixels are spread across non-grass regions of the image, their cumulative effect can still shift the weighted circular mean away from the true grass lay direction. A human observer instinctively ignores these regions entirely, focusing attention only on areas where grass texture is clearly visible. The algorithm, by contrast, incorporates every pixel's contribution unless a magnitude threshold is explicitly applied beforehand to exclude low-confidence regions, making it more susceptible to being pulled by noise from non-grass areas of the image.</span>
+<span id="cb2-43"><a href="#cb2-43"></a></span>
+<span id="cb2-44"><a href="#cb2-44"></a>A second source of disagreement is the variety of aerial perspectives across the 65 images. Some images were captured from directly overhead, providing a clear top-down view of grass lay patterns, while others were taken at a lower angle closer to the grass surface, changing how gradient directions are expressed in the image. Image quality like in @fig-resultblurry produced blurry outlines and reduced texture clarity. In such cases the gradient analysis struggles to identify a coherent dominant direction, while human observers may still be able to use contextual cues to make a reasonable directional judgment.</span>
+<span id="cb2-45"><a href="#cb2-45"></a></span>
+<span id="cb2-46"><a href="#cb2-46"></a><span class="fu">### Comparing Dominant Grass Direction and Wind Data</span></span>
+<span id="cb2-47"><a href="#cb2-47"></a></span>
+<span id="cb2-48"><a href="#cb2-48"></a>At the SLU Living Lab, a wind station installed adjacent to the tundra vegetation records wind speed and direction at 15-minute intervals via a wind vane and anemometer. To align the wind data with the grass images, the 15-minute readings were aggregated to daily circular mean wind directions using circular statistics, accounting for the angular nature of wind direction data. This produces one representative wind direction per day that captures the overall prevailing direction across all readings that day.</span>
+<span id="cb2-49"><a href="#cb2-49"></a></span>
+<span id="cb2-50"><a href="#cb2-50"></a>To connect the grass images to the wind data, EXIF metadata that is the Exchangeable Image File Format information embedded in every digital image file was extracted from each drone image using the <span class="in">`exif`</span> package in R <span class="co">[</span><span class="ot">@cci2024</span><span class="co">]</span>. The <span class="in">`DateTimeOriginal`</span> field was retrieved, which records the exact date the image was captured by the drone, and cleaned into a standardized date variable. Since the grass images were taken in April 2023, wind data from April through September 2022 (the full growing season prior to image capture) was used for comparison. The rationale is that grass lay direction observed in April 2023 reflects the cumulative effect of winds experienced during the 2022 growing season when the grass was actively growing and being shaped by prevailing conditions.</span>
+<span id="cb2-51"><a href="#cb2-51"></a></span>
+<span id="cb2-52"><a href="#cb2-52"></a>Nine representative images with the smallest circular distances between gradient analysis and human assessment were selected, representing cases of strongest agreement between the two methods on dominant grass direction. The gradient analysis dominant direction for each of these nine images was overlaid as a colored vertical line on polar histograms of the monthly wind direction distributions from April through September 2022. </span>
+<span id="cb2-53"><a href="#cb2-53"></a>             </span>
+<span id="cb2-54"><a href="#cb2-54"></a>In @fig-monthplots, the grass lay directions from the nine selected images are represented as colored vertical lines overlaid on each month's wind direction polar histogram. The alignment between the lines and the dominant bars of the wind histogram indicates months where grass lay direction corresponds well with prevailing wind patterns. This alignment is most evident in the spring months of April and May, which represent the early growing season when grass is most actively responding to wind exposure. This correspondence supports the use of grass lay direction as a proxy for prevailing wind direction, particularly during the growing season.</span>
+<span id="cb2-55"><a href="#cb2-55"></a></span>
+<span id="cb2-56"><a href="#cb2-56"></a><span class="al">![Wind Data and Dominant Grass Lay From Images.](media/monthplots.png)</span>{#fig-monthplots width=80%}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 

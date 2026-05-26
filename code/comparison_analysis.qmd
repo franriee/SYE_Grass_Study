@@ -523,7 +523,7 @@ monthplots <- ggplot(
     breaks = c(0, 45, 90, 135, 180, 225, 270, 315),    
     labels = c("N", "NE", "E", "SE", "S", "SW", "W", "NW")
   ) +
-  facet_wrap(~month, ncol = 2) +
+  facet_wrap(~month, ncol = 3) +
   geom_vline(data = diff_df %>% filter(image == "LL grass24 March 2023")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "LL grass24 March 2023"), linewidth = 1.5) +
     geom_vline(data = diff_df %>% filter(image == "DJI_0362")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "DJI_0362"), linewidth = 1.5) +
     geom_vline(data = diff_df %>% filter(image == "DJI_0346")%>%select(image, hog_angle), aes(xintercept = hog_angle, color = "DJI_0346"), linewidth = 1.5) +

@@ -24,13 +24,14 @@ To help calibrate what these values mean in practice: a circular distance of 0 i
 
 The mean circular distance across all 65 images is 0.26 with a variance of 0.09, suggesting that on average the gradient analysis and human assessment are in moderate agreement. The minimum circular distance of 0.0006 indicates near-perfect agreement for at least one image, while the maximum of 0.999 indicates that for at least one image the two methods produced nearly perpendicular dominant direction estimates. There are a number of images where both methods closely align, but also a number where they diverge substantially. In @fig-results, the yellow arrow represents the dominant direction estimated by the gradient analysis and the black arrow represents the human assessment, illustrating examples of both low, medium, and high circular distance cases.
 
+
 ::: {#fig-results layout-ncol=3}
 
-![Low = 0.0084](media/minimages.png){#fig-resultmin width=80%}
+![Low = 0.0084](media/minimages.png){#fig-resultmin width=200%}
 
-![Medium = 0.55486](media/maximages.png){#fig-resultmax width=80%}
+![Medium = 0.5548](media/maximages.png){#fig-resultmax width=200%}
 
-![High = 0.9999](media/blurry_images.png){#fig-resultblurry width=80%}
+![High = 0.9999](media/blurry_images.png){#fig-resultblurry width=200%}
 
 Images Showing Circular Distance.
 
@@ -52,4 +53,4 @@ Nine representative images with the smallest circular distances between gradient
              
 In @fig-monthplots, the grass lay directions from the nine selected images are represented as colored vertical lines overlaid on each month's wind direction polar histogram. The alignment between the lines and the dominant bars of the wind histogram indicates months where grass lay direction corresponds well with prevailing wind patterns. This alignment is most evident in the spring months of April and May, which represent the early growing season when grass is most actively responding to wind exposure. This correspondence supports the use of grass lay direction as a proxy for prevailing wind direction, particularly during the growing season.
 
-![Wind Data and Dominant Grass Lay From Images.](media/monthplots.png){#fig-monthplots width=120%}
+![Wind Data and Dominant Grass Lay From Images.](media/monthplots.png){#fig-monthplots width=80%}
