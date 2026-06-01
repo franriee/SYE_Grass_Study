@@ -50,7 +50,7 @@ To evaluate the image-based orientation estimates, a custom R Shiny application 
 The analysis found promising agreement between human assessments of grass orientation, gradient-based orientation estimates, and recorded wind observations. These findings suggest that image gradient analysis may provide a useful quantitative approach for studying tundra orientation and environmental wind patterns from aerial imagery.
 
 ### Interactive Project Website
-You can find the project webite at: https://franriee.github.io/SYE_Grass_Study/. The website includes: a full methodology, statistical analysis, visualizations, results, and discussion.
+You can find the project website at: https://franriee.github.io/SYE_Grass_Study/. The webpage includes a full methodology, statistical analysis, visualizations, results, and discussion.
 
 ### Acknowledgments
 Special thanks to Dr. Ivan Ramler and the broader Arctic wind and Traditional Ecological Knowledge (TEK) research initiative at St. Lawrence University being led by Dr Jon Rosales for their guidance and support throughout this project.
