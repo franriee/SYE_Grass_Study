@@ -1,25 +1,19 @@
 # Estimating Grass Orientation from Drone Images to Determine Wind Patterns
 
-## Author
-Francesca Mnenula, B.S. Data Science and Economics, St. Lawrence University
+### Author Details
+Researcher: Francesca Mnenula, B.S. Data Science and Economics, St. Lawrence University  
+Advisor: Dr. Ivan Ramler, Jack and Sylvia Burry Chair in Statistics, Associate Professor, St. Lawrence University
 
-## Honors Thesis Advisor
-Dr. Ivan Ramler, Jack and Sylvia Burry Chair in Statistics, Associate Professor, St. Lawrence University
-
-## Overview
+### Overview
 This repository contains the code, data, and supporting materials for my Honors Thesis in Data Science at St. Lawrence University:
 
-## Estimating Grass Orientation from Drone Images to Determine Wind Patterns
-The project explores whether image gradient analysis techniques can be used to estimate dominant tundra grass orientation from aerial drone imagery and evaluate its relationship to prevailing wind patterns. The broader motivation is to investigate computational approaches that may support the interpretation and recalibration of Traditional Ecological Knowledge (TEK) in Arctic environments like the Savoonga region in Alaska.
+This project titled "Estimating Grass Orientation from Drone Images to Determine Wind Patterns" explores whether image gradient analysis techniques can be used to estimate dominant tundra grass orientation from aerial drone imagery and evaluate its relationship to prevailing wind patterns. The broader motivation is to investigate computational approaches that may support the interpretation and recalibration of Traditional Ecological Knowledge (TEK) in Arctic environments like the Savoonga region in Alaska.
 
 Using drone imagery collected at the St. Lawrence University Living Laboratory, I developed an R-based image analysis algorithm inspired by components of the Histogram of Oriented Gradients (HOG) method. The resulting orientation estimates were compared with both historical wind data and human assessments collected through a custom R Shiny application.
 
-## Research Questions
-- Can image gradient analysis estimate dominant grass lay direction from aerial drone imagery?
-- How closely do computated gradient analysis estimates align with human perception of the same images?
-- How well does grass orientation correspond with measured wind patterns?
+The main research questions being answered include: can image gradient analysis estimate dominant grass lay direction from aerial drone imagery; how closely do computated gradient analysis estimates align with human perception of the same images; and how well does grass orientation correspond with measured wind patterns?
 
-## Methods
+### Methods
 The analysis pipeline includes:
 - Image preprocessing and cropping
 - Pixel-level gradient extraction
@@ -34,7 +28,7 @@ Key techniques used:
 - Environmental/weather data analysis
 - Interactive web application development in R Shiny
 
-## Folder Structure
+### Folder Structure
 This repository contains the code, data, applications, and outputs developed throughout the project. The primary folders are summarized below.
 
 1. code/: Contains the R quarto documents used for image processing, gradient analysis, circular statistics calculations, and orientation estimation. The main analysis pipeline is in the grass_images_gradient_analysis document that applies a HOG-inspired approach to estimate dominant grass orientation from images.
@@ -49,15 +43,15 @@ This repository contains the code, data, applications, and outputs developed thr
 10. docs/: Contain files used to generate and host the project's GitHub Pages website.
 11. keep/: Archive folder containing initial exploratory analyses, uncropped images, AI-generated test images, and other materials retained for reference but not used in the final analysis.
 
-## Human Validation Study
+### Human Validation
 To evaluate the image-based orientation estimates, a custom R Shiny application was developed where volunteers assessed dominant grass orientation from drone imagery. The resulting responses were compared against gradient-based estimates to assess agreement between computational methods and human perception.
 
-## Results
+### Results
 The analysis found promising agreement between human assessments of grass orientation, gradient-based orientation estimates, and recorded wind observations. These findings suggest that image gradient analysis may provide a useful quantitative approach for studying tundra orientation and environmental wind patterns from aerial imagery.
 
-## Interactive Project Website
+### Interactive Project Website
 You can find the project webite at: https://franriee.github.io/SYE_Grass_Study/. The website includes: a full methodology, statistical analysis, visualizations, results, and discussion.
 
-## Acknowledgments
-Special thanks to Dr. Ivan Ramler and the broader Arctic wind and Traditional Ecological Knowledge (TEK) research initiative at St. Lawrence University for their guidance and support throughout this project.
+### Acknowledgments
+Special thanks to Dr. Ivan Ramler and the broader Arctic wind and Traditional Ecological Knowledge (TEK) research initiative at St. Lawrence University being led by Dr Jon Rosales for their guidance and support throughout this project.
 
